@@ -278,14 +278,11 @@
     const chips = (p.highlights || []).slice(0, 3).map((h) => `<span class="spec-chip">${escapeHtml(h)}</span>`).join("");
     const configureHref = p.configurable ? `forge-lab.html?product=${encodeURIComponent(p.id)}` : "customer-service.html";
     const configureLabel = p.configurable ? "Configure" : "Request Info";
-    const visual = p.photos && p.photos.length
-      ? `<img src="${escapeHtml(p.photos[0])}" alt="${escapeHtml(p.name)}" loading="lazy">`
-      : svg(p.icon);
     return `
     <article class="panel product-tile reveal" data-product-id="${p.id}" data-category="${p.category}">
       <div class="product-tile__visual">
         <span class="status-badge ${statusClass} product-tile__status">${statusLabel}</span>
-        ${visual}
+        ${svg(p.icon)}
       </div>
       <div class="product-tile__body">
         <span class="product-tile__category">${escapeHtml(CATEGORY_LABELS[p.category] || p.category)}</span>
