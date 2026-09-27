@@ -608,6 +608,29 @@ p { color: var(--c-gray-light); line-height: 1.65; font-size: 1rem; }
 .icon-tile svg { width: 22px; height: 22px; }
 
 /* ============================================================
+   Trust bar (homepage, under hero)
+   ============================================================ */
+#trust-bar { padding-top: clamp(2rem, 4vw, 3rem); padding-bottom: clamp(2rem, 4vw, 3rem); }
+.trust-card {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.trust-card .icon-tile {
+  margin: 0 auto .9rem;
+  color: var(--c-orange);
+}
+.trust-card h4 {
+  font-family: var(--ff-mono);
+  letter-spacing: -.01em;
+}
+.trust-card p {
+  color: var(--c-gray);
+  font-size: .88rem;
+}
+
+/* ============================================================
    Stats strip
    ============================================================ */
 .stats {
