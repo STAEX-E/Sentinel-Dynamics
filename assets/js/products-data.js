@@ -183,6 +183,7 @@
       highlights: ["5-Inch", "200 km/h", "80A ESC"],
       priceINR: 108000,
       configurable: true,
+      photos: ["assets/img/products/interceptor-5-1.webp"],
     },
     {
       id: "interceptor-7",

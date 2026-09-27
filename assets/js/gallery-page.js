@@ -45,7 +45,7 @@
     { id: 8, category: "fpv", title: "FPV 3.5\" — Micro Build" },
     { id: 9, category: "interceptor", title: "Interceptor 7\" — Handheld", image: "assets/img/products/interceptor-7-1.jpg" },
     { id: 10, category: "interceptor", title: "Interceptor 7\" — In Flight", image: "assets/img/products/interceptor-7-2.jpg" },
-    { id: 11, category: "interceptor", title: "Interceptor 5\" — Enclosed Body" },
+    { id: 11, category: "interceptor", title: "Interceptor 5\" — Enclosed Body", image: "assets/img/products/interceptor-5-1.webp" },
     { id: 12, category: "counter-uas", title: "Counter-UAS Jammer — Field Deployment" },
     { id: 13, category: "counter-uas", title: "RF Detection System — Mobile Mount" },
     { id: 14, category: "counter-uas", title: "Laser Range Finder — Targeting Trial" },
