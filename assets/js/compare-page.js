@@ -86,7 +86,7 @@
       const y = padT + (plotH / gridCount) * i;
       const val = maxPrice - (maxPrice / gridCount) * i;
       gridSvg += `<line x1="${padL}" y1="${y.toFixed(1)}" x2="${padL + plotW}" y2="${y.toFixed(1)}" stroke="var(--c-border)" stroke-width="1"/>`;
-      gridSvg += `<text x="${padL - 10}" y="${(y + 4).toFixed(1)}" text-anchor="end" class="compare-chart__axis-label">${window.escapeHtml(window.formatINR(val))}</text>`;
+      gridSvg += `<text x="${padL - 10}" y="${(y + 4).toFixed(1)}" text-anchor="end" class="compare-chart__axis-label compare-chart__axis-label--y">${window.escapeHtml(window.formatINR(val))}</text>`;
     }
 
     const xLabels = points

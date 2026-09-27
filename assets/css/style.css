@@ -2064,6 +2064,7 @@ body.id-verify-locked > *:not(#id-verify-overlay) {
   font-size: 9px;
   fill: var(--c-gray);
 }
+.compare-chart__axis-label--y { fill: var(--c-white); }
 .compare-chart__dot {
   fill: var(--c-bg);
   stroke: var(--c-yellow);
