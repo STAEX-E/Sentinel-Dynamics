@@ -83,26 +83,34 @@
 
   const priceEl = document.getElementById("pd-price");
   const totalEl = document.getElementById("pd-total");
-  const qtyInput = document.getElementById("qty-input");
   let qty = 1;
 
-  function pad2(n) { return n < 10 ? "0" + n : "" + n; }
-
   function refreshPricing() {
-    qtyInput.value = pad2(qty);
     priceEl.textContent = window.formatINR(product.priceINR);
     totalEl.textContent = "Total: " + window.formatINR(product.priceINR * qty);
   }
-  refreshPricing();
 
-  document.getElementById("qty-minus").addEventListener("click", () => {
-    qty = Math.max(1, qty - 1);
-    refreshPricing();
+  const isSwarm = product.category === "swarm";
+  const qtyMax = isSwarm ? 100 : 20;
+  const qtyTicks = isSwarm
+    ? [{ value: 1, label: "1" }, { value: 25, label: "25" }, { value: 50, label: "50" }, { value: 75, label: "75" }, { value: 100, label: "100" }]
+    : [{ value: 1, label: "1" }, { value: 5, label: "5" }, { value: 10, label: "10" }, { value: 15, label: "15" }, { value: 20, label: "20" }];
+
+  window.SentinelSlider.mount(document.getElementById("pd-qty-slider"), {
+    min: 1,
+    max: qtyMax,
+    step: 1,
+    value: qty,
+    label: isSwarm ? "Number of Drones" : "Quantity",
+    format: (v) => (v < 10 ? "0" + v : String(v)),
+    ticks: qtyTicks,
+    onChange: (v) => {
+      qty = v;
+      refreshPricing();
+    },
   });
-  document.getElementById("qty-plus").addEventListener("click", () => {
-    qty = Math.min(99, qty + 1);
-    refreshPricing();
-  });
+
+  refreshPricing();
 
   const configureBtn = document.getElementById("pd-configure");
   if (product.configurable) {

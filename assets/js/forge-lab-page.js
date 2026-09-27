@@ -162,16 +162,21 @@
   }
 
   function renderFpvSizePicker() {
-    els.fpvSizes.innerHTML = F.FPV_FRAME_SIZES.map(
-      (size) => `<button type="button" class="forge-pill${size === sel.fpvSizeIn ? " is-selected" : ""}" data-size="${size}">${size}″</button>`
-    ).join("");
-    els.fpvSizes.querySelectorAll(".forge-pill").forEach((btn) => {
-      btn.addEventListener("click", () => {
-        sel.fpvSizeIn = Number(btn.dataset.size);
-        renderFpvSizePicker();
+    const sizes = F.FPV_FRAME_SIZES;
+    const currentIndex = Math.max(0, sizes.indexOf(sel.fpvSizeIn));
+    window.SentinelSlider.mount(els.fpvSizes, {
+      min: 0,
+      max: sizes.length - 1,
+      step: 1,
+      value: currentIndex,
+      label: "Frame Size",
+      format: (idx) => sizes[idx] + "″",
+      ticks: sizes.map((size, idx) => ({ value: idx, label: size + "″" })),
+      onChange: (idx) => {
+        sel.fpvSizeIn = sizes[idx];
         updateFpvFrameSelection();
         recompute();
-      });
+      },
     });
   }
 
@@ -382,6 +387,23 @@
     Object.keys(MISSION_QUESTIONS).forEach((key) => {
       const q = MISSION_QUESTIONS[key];
       const el = document.getElementById(q.el);
+
+      if (key === "budget") {
+        const currentIndex = Math.max(0, q.options.findIndex((o) => o.id === mission.budget));
+        if (!mission.budget) mission.budget = q.options[0].id;
+        window.SentinelSlider.mount(el, {
+          min: 0,
+          max: q.options.length - 1,
+          step: 1,
+          value: currentIndex,
+          label: "Budget Range",
+          format: (idx) => q.options[idx].label,
+          ticks: q.options.map((o, idx) => ({ value: idx, label: o.label })),
+          onChange: (idx) => { mission.budget = q.options[idx].id; },
+        });
+        return;
+      }
+
       el.innerHTML = q.options
         .map((o) => `<button type="button" class="forge-pill${mission[key] === o.id ? " is-selected" : ""}" data-value="${o.id}">${o.label}</button>`)
         .join("");

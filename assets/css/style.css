@@ -1167,6 +1167,84 @@ body.id-verify-locked > *:not(#id-verify-overlay) {
 .iv-back { font-size: .76rem; }
 
 /* ============================================================
+   Reusable range slider
+   ============================================================ */
+.rslider { width: 100%; }
+.rslider__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: .7rem;
+}
+.rslider__label {
+  font-family: var(--ff-mono);
+  font-size: .64rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--c-gray);
+}
+.rslider__value {
+  font-family: var(--ff-mono);
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--c-white);
+}
+.rslider__input {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 6px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--c-yellow) 0%, var(--c-orange) var(--fill, 0%), var(--c-panel-2) var(--fill, 0%), var(--c-panel-2) 100%);
+  outline: none;
+  cursor: pointer;
+  margin: 0;
+}
+.rslider__input::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--c-bg);
+  border: 2px solid var(--c-yellow);
+  box-shadow: 0 2px 0 rgba(0,0,0,.7);
+  cursor: pointer;
+  transition: transform .15s var(--ease-out);
+}
+.rslider__input:hover::-webkit-slider-thumb,
+.rslider__input:active::-webkit-slider-thumb { transform: scale(1.18); }
+.rslider__input::-moz-range-track {
+  height: 6px;
+  border-radius: 2px;
+  background: var(--c-panel-2);
+}
+.rslider__input::-moz-range-progress {
+  height: 6px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--c-yellow), var(--c-orange));
+}
+.rslider__input::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--c-bg);
+  border: 2px solid var(--c-yellow);
+  cursor: pointer;
+  transition: transform .15s var(--ease-out);
+}
+.rslider__input:hover::-moz-range-thumb,
+.rslider__input:active::-moz-range-thumb { transform: scale(1.18); }
+.rslider__ticks {
+  display: flex;
+  justify-content: space-between;
+  margin-top: .55rem;
+  font-family: var(--ff-mono);
+  font-size: .64rem;
+  color: var(--c-gray);
+}
+.rslider__ticks span.is-active { color: var(--c-yellow); font-weight: 700; }
+
+/* ============================================================
    About page — timeline
    ============================================================ */
 .timeline {
@@ -1663,6 +1741,14 @@ body.id-verify-locked > *:not(#id-verify-overlay) {
   padding-top: 1.1rem;
   border-top: 1px solid var(--c-border);
 }
+.pd-purchase__row--slider {
+  flex-direction: column;
+  align-items: stretch;
+}
+.pd-purchase__row--slider .pd-total {
+  text-align: right;
+  margin-top: .8rem;
+}
 .pd-purchase__row .pd-total {
   font-weight: 700;
   color: var(--c-yellow);
@@ -1675,42 +1761,11 @@ body.id-verify-locked > *:not(#id-verify-overlay) {
 }
 
 /* ============================================================
-   Quantity stepper
+   Compact slider variant (cart line items)
    ============================================================ */
-.qty-stepper {
-  display: inline-flex;
-  align-items: center;
-  gap: 0;
-  border: 1px solid var(--c-border);
-  border-radius: 2px;
-  overflow: hidden;
-}
-.qty-stepper button {
-  width: 38px;
-  height: 38px;
-  background: var(--c-panel-2);
-  color: var(--c-white);
-  border: none;
-  font-size: 1rem;
-  font-weight: 700;
-  cursor: pointer;
-  transition: background .2s var(--ease-out), color .2s var(--ease-out);
-}
-.qty-stepper button:hover { background: var(--c-border); color: var(--c-yellow); }
-.qty-stepper input {
-  width: 52px;
-  height: 38px;
-  text-align: center;
-  background: var(--c-bg-soft);
-  color: var(--c-white);
-  border: none;
-  border-left: 1px solid var(--c-border);
-  border-right: 1px solid var(--c-border);
-  font-size: .9rem;
-  font-weight: 700;
-  font-family: inherit;
-}
-.qty-stepper input:focus { outline: none; }
+.rslider--compact { width: 180px; }
+.rslider--compact .rslider__head { margin-bottom: .4rem; }
+.rslider--compact .rslider__value { font-size: 1rem; }
 
 /* ============================================================
    FORGE LAB configurator
@@ -1995,6 +2050,44 @@ body.id-verify-locked > *:not(#id-verify-overlay) {
 /* ============================================================
    Compare Systems
    ============================================================ */
+.compare-chart {
+  position: relative;
+}
+.compare-chart__svg {
+  width: 100%;
+  height: auto;
+  display: block;
+  overflow: visible;
+}
+.compare-chart__axis-label {
+  font-family: var(--ff-mono);
+  font-size: 9px;
+  fill: var(--c-gray);
+}
+.compare-chart__dot {
+  fill: var(--c-bg);
+  stroke: var(--c-yellow);
+  stroke-width: 2;
+  cursor: pointer;
+  transition: r .15s var(--ease-out);
+}
+.compare-chart__dot:hover { r: 7; }
+.compare-chart__tooltip {
+  position: absolute;
+  transform: translate(-50%, -130%);
+  background: var(--c-panel-2);
+  border: 1px solid var(--c-yellow-dim);
+  border-radius: 2px;
+  padding: .5rem .7rem;
+  font-size: .74rem;
+  line-height: 1.4;
+  color: var(--c-white);
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 5;
+}
+.compare-chart__tooltip strong { display: block; font-size: .7rem; color: var(--c-gray-light); margin-bottom: .1rem; }
+
 .compare-table-wrap {
   overflow-x: auto;
   border-radius: var(--radius-lg);

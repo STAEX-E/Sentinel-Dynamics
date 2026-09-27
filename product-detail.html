@@ -71,12 +71,8 @@
           <div id="pd-price">—</div>
         </div>
         <p id="pd-qty-hint" class="pd-qty-hint" style="display:none;"></p>
-        <div class="pd-purchase__row">
-          <div class="qty-stepper">
-            <button type="button" id="qty-minus" aria-label="Decrease quantity">−</button>
-            <input type="text" id="qty-input" value="01" readonly aria-label="Quantity">
-            <button type="button" id="qty-plus" aria-label="Increase quantity">+</button>
-          </div>
+        <div class="pd-purchase__row pd-purchase__row--slider">
+          <div class="rslider" id="pd-qty-slider"></div>
           <div class="pd-total" id="pd-total">—</div>
         </div>
         <div class="btn-row" style="margin-top:1.2rem;">
@@ -128,6 +124,7 @@
 
 <script src="assets/js/products-data.js"></script>
 <script src="assets/js/cart.js"></script>
+<script src="assets/js/slider.js"></script>
 <script src="assets/js/product-detail-page.js"></script>
 <script src="assets/js/particles.js"></script>
 <script src="assets/js/main.js"></script>

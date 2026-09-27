@@ -60,11 +60,7 @@
             <div class="cart-item__price">${window.formatINR(item.unitPriceINR)} × ${item.qty} = <strong>${window.formatINR(lineTotal)}</strong></div>
           </div>
           <div class="cart-item__actions">
-            <div class="qty-stepper">
-              <button type="button" data-qty="minus" aria-label="Decrease quantity">−</button>
-              <input type="text" value="${item.qty < 10 ? "0" + item.qty : item.qty}" readonly>
-              <button type="button" data-qty="plus" aria-label="Increase quantity">+</button>
-            </div>
+            <div class="rslider rslider--compact" id="qty-slider-${item.cartItemId}"></div>
             <div class="cart-item__links">
               ${editHref ? `<a href="${editHref}">Edit Configuration</a>` : ""}
               <button type="button" data-action="remove">Remove</button>
@@ -76,24 +72,35 @@
       .join("");
 
     totalEl.textContent = window.formatINR(window.SentinelCart.getTotal());
+
+    cart.forEach((item) => {
+      const product = item.productId ? (window.SENTINEL_PRODUCTS || []).find((p) => p.id === item.productId) : null;
+      const isSwarm = product && product.category === "swarm";
+      const max = isSwarm ? 100 : 20;
+      window.SentinelSlider.mount(document.getElementById("qty-slider-" + item.cartItemId), {
+        min: 1,
+        max,
+        step: 1,
+        value: item.qty || 1,
+        label: isSwarm ? "Number of Drones" : "Quantity",
+        format: (v) => (v < 10 ? "0" + v : String(v)),
+        onChange: (v) => {
+          window.SentinelCart.updateQty(item.cartItemId, v);
+          const priceLine = document.querySelector(`[data-cart-item-id="${item.cartItemId}"] .cart-item__price`);
+          if (priceLine) {
+            priceLine.innerHTML = `${window.formatINR(item.unitPriceINR)} × ${v} = <strong>${window.formatINR(item.unitPriceINR * v)}</strong>`;
+          }
+          totalEl.textContent = window.formatINR(window.SentinelCart.getTotal());
+        },
+      });
+    });
   }
 
   itemsEl.addEventListener("click", (e) => {
     const card = e.target.closest("[data-cart-item-id]");
     if (!card) return;
-    const id = card.dataset.cartItemId;
-
     if (e.target.closest('[data-action="remove"]')) {
-      window.SentinelCart.removeItem(id);
-      render();
-      return;
-    }
-    if (e.target.closest('[data-qty="minus"]') || e.target.closest('[data-qty="plus"]')) {
-      const cart = window.SentinelCart.readCart();
-      const item = cart.find((i) => i.cartItemId === id);
-      if (!item) return;
-      const delta = e.target.closest('[data-qty="plus"]') ? 1 : -1;
-      window.SentinelCart.updateQty(id, Math.max(1, (item.qty || 1) + delta));
+      window.SentinelCart.removeItem(card.dataset.cartItemId);
       render();
     }
   });
