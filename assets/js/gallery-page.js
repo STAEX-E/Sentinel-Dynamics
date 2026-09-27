@@ -35,7 +35,7 @@
   };
 
   const ITEMS = [
-    { id: 1, category: "uav", title: "VIEW VTOL — Full Assembly" },
+    { id: 1, category: "uav", title: "YHUH VTOL — Full Assembly" },
     { id: 2, category: "uav", title: "ATLAS VTOL — Cargo Configuration" },
     { id: 3, category: "vtol", title: "ANIKETRA VTOL — Spatian Aviation Collaboration" },
     { id: 4, category: "vtol", title: "Tail-Sitter VTOL — Transition Test" },

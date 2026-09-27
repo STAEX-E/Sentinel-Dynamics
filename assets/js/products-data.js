@@ -41,16 +41,16 @@
     // ---------------- VTOL ----------------
     {
       id: "vtol-view",
-      name: "VIEW VTOL",
+      name: "YHUH VTOL",
       category: "vtol",
       status: "active",
       tag: "Fixed-Wing VTOL · Surveillance & Strike",
       icon: "vtol",
       short: "A 4 m, IC-engine VTOL built for 3-hour surveillance and precision-strike missions.",
-      description: "VIEW is Sentinel Dynamics' long-endurance fixed-wing VTOL — a 4-metre-wingspan platform powered by an internal-combustion engine for extended time-on-station. It combines persistent surveillance with a precision-strike capability via ULTGMs, operating up to 500 m / 1,640 ft.",
+      description: "YHUH is Sentinel Dynamics' long-endurance fixed-wing VTOL — a 4-metre-wingspan platform powered by an internal-combustion engine for extended time-on-station. It combines persistent surveillance with a precision-strike capability via ULTGMs, operating up to 500 m / 1,640 ft.",
       specs: { wingspan: "4 m", topSpeed: "130 km/h", power: "IC Engine", endurance: "3 h", maxAltitude: "500 m / 1,640 ft", payload: "ULTGMs", role: "Surveillance + Precision Strike", weight: "18 kg MTOW" },
       highlights: ["4 m Wingspan", "3 h Endurance", "130 km/h"],
-      priceINR: 14500000,
+      priceINR: 15000000,
       configurable: true,
     },
     {
