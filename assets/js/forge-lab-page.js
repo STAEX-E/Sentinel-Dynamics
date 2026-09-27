@@ -336,6 +336,116 @@
     });
   }
 
+  /* ---------------- Mission Profile: guided recommendation ---------------- */
+  const MISSION_QUESTIONS = {
+    mission: {
+      el: "forge-q-mission",
+      options: [
+        { id: "isr", label: "Surveillance & ISR" },
+        { id: "strike", label: "Precision Strike" },
+        { id: "counter-uas", label: "Counter-UAS Defense" },
+        { id: "logistics", label: "Logistics & Resupply" },
+        { id: "training", label: "Training / Recreational" },
+      ],
+    },
+    environment: {
+      el: "forge-q-environment",
+      options: [
+        { id: "urban", label: "Urban / Close-Quarters" },
+        { id: "rural", label: "Open Field / Rural" },
+        { id: "maritime", label: "Maritime / Coastal" },
+        { id: "mountain", label: "High-Altitude / Mountain" },
+      ],
+    },
+    experience: {
+      el: "forge-q-experience",
+      options: [
+        { id: "novice", label: "Novice" },
+        { id: "intermediate", label: "Intermediate" },
+        { id: "expert", label: "Expert" },
+      ],
+    },
+    budget: {
+      el: "forge-q-budget",
+      options: [
+        { id: "low", label: "Under ₹1L" },
+        { id: "mid", label: "₹1L – ₹10L" },
+        { id: "high", label: "₹10L – ₹50L" },
+        { id: "premium", label: "Above ₹50L" },
+      ],
+    },
+  };
+
+  const mission = { mission: null, environment: null, experience: null, budget: null };
+
+  function renderMissionQuestions() {
+    Object.keys(MISSION_QUESTIONS).forEach((key) => {
+      const q = MISSION_QUESTIONS[key];
+      const el = document.getElementById(q.el);
+      el.innerHTML = q.options
+        .map((o) => `<button type="button" class="forge-pill${mission[key] === o.id ? " is-selected" : ""}" data-value="${o.id}">${o.label}</button>`)
+        .join("");
+      el.querySelectorAll(".forge-pill").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          mission[key] = btn.dataset.value;
+          renderMissionQuestions();
+        });
+      });
+    });
+  }
+
+  function recommendPlatform() {
+    if (mission.mission === "counter-uas") {
+      return { platformId: "interceptor", reason: "Counter-UAS defense calls for a fast, dedicated interceptor airframe built to close on and neutralize hostile drones." };
+    }
+    if (mission.mission === "logistics") {
+      return { platformId: "octacopter", reason: "Logistics and resupply work needs the lift capacity and redundancy of a heavy-class multirotor." };
+    }
+    if (mission.mission === "isr" && mission.environment === "maritime") {
+      return { platformId: "fixed-wing", reason: "Maritime ISR favors the range and fuel-efficient endurance of a fixed-wing platform over open water." };
+    }
+    if (mission.mission === "isr" && mission.environment === "mountain") {
+      return { platformId: "vtol", reason: "High-altitude ISR benefits from VTOL's runway-free deployment combined with fixed-wing-class endurance." };
+    }
+    if (mission.mission === "isr") {
+      return { platformId: "hexacopter", reason: "General-purpose ISR is well served by a stable, sensor-friendly hexacopter platform." };
+    }
+    if (mission.mission === "strike") {
+      return { platformId: "fpv", reason: "Precision strike missions are best served by a fast, agile FPV build sized to the target profile." };
+    }
+    if (mission.mission === "training") {
+      return { platformId: "hexacopter", reason: "A hexacopter's stability and motor redundancy make it a forgiving platform for building team proficiency." };
+    }
+    return { platformId: "fpv", reason: "Without a specific mission selected, a balanced FPV build is a solid general-purpose starting point." };
+  }
+
+  function wireMissionProfile() {
+    renderMissionQuestions();
+
+    document.getElementById("forge-get-recommendation").addEventListener("click", () => {
+      const rec = recommendPlatform();
+      const platform = F.byId(F.PLATFORMS, rec.platformId);
+      let reason = rec.reason;
+      if (mission.experience === "novice") reason += " Novice teams should also lean on the compatibility report before finalizing a build.";
+      if (mission.budget === "low") reason += " A lower budget points toward smaller frame sizes and simpler electronics.";
+      if (mission.budget === "premium") reason += " A larger budget opens up heavier payloads and redundant electronics.";
+
+      document.getElementById("forge-rec-title").textContent = platform ? platform.label : rec.platformId;
+      document.getElementById("forge-rec-reason").textContent = reason;
+      document.getElementById("forge-recommendation").style.display = "";
+    });
+
+    document.getElementById("forge-use-recommendation").addEventListener("click", () => {
+      const rec = recommendPlatform();
+      sel.platformId = rec.platformId;
+      sel.frameId = null;
+      renderPlatformCards();
+      renderFrame();
+      recompute();
+      document.getElementById("forge-platforms").scrollIntoView({ behavior: "smooth", block: "center" });
+    });
+  }
+
   function init() {
     const params = new URLSearchParams(window.location.search);
     const restoreId = params.get("restore");
@@ -362,6 +472,7 @@
     renderProtocolPills();
     recompute();
     wireActions();
+    wireMissionProfile();
 
     [
       els.frame, els.motor, els.prop, els.esc, els.battery, els.fc, els.gps, els.video, els.camera, els.payload, els.receiver,

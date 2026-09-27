@@ -60,13 +60,42 @@
     <div class="forge-main">
 
       <div class="forge-step reveal">
-        <h3>01 — Select Platform</h3>
+        <h3>01 — Mission Profile</h3>
+        <p class="forge-step__hint">Answer a few questions and Forge Lab will recommend a starting platform.</p>
+        <div class="forge-field">
+          <label>Primary Mission</label>
+          <div class="forge-pills" id="forge-q-mission"></div>
+        </div>
+        <div class="forge-field" style="margin-top:1rem;">
+          <label>Operating Environment</label>
+          <div class="forge-pills" id="forge-q-environment"></div>
+        </div>
+        <div class="forge-field" style="margin-top:1rem;">
+          <label>Team Experience</label>
+          <div class="forge-pills" id="forge-q-experience"></div>
+        </div>
+        <div class="forge-field" style="margin-top:1rem;">
+          <label>Budget Range</label>
+          <div class="forge-pills" id="forge-q-budget"></div>
+        </div>
+        <button class="btn btn--primary" id="forge-get-recommendation" type="button" style="margin-top:1.4rem;">Get My Recommendation</button>
+
+        <div class="panel forge-recommendation" id="forge-recommendation" style="display:none; margin-top:1.4rem;">
+          <div class="forge-recommendation__label">Recommended Starting Point</div>
+          <h3 id="forge-rec-title">—</h3>
+          <p id="forge-rec-reason"></p>
+          <button class="btn btn--outline" id="forge-use-recommendation" type="button">Use This Recommendation <span class="arrow">↓</span></button>
+        </div>
+      </div>
+
+      <div class="forge-step reveal">
+        <h3>02 — Select Platform</h3>
         <p class="forge-step__hint">Choose the airframe class you're building.</p>
         <div class="forge-options" id="forge-platforms"></div>
       </div>
 
       <div class="forge-step reveal">
-        <h3>02 — Frame</h3>
+        <h3>03 — Frame</h3>
         <p class="forge-step__hint">Frame options update based on your platform.</p>
         <div class="forge-field" id="forge-frame-field">
           <label for="forge-frame">Frame</label>
@@ -91,7 +120,7 @@
       </div>
 
       <div class="forge-step reveal">
-        <h3>03 — Propulsion</h3>
+        <h3>04 — Propulsion</h3>
         <p class="forge-step__hint">Motor, propeller and ESC selection.</p>
         <div class="forge-grid">
           <div class="forge-field"><label for="forge-motor">Motor</label><div class="select-field"><select id="forge-motor"></select></div></div>
@@ -101,7 +130,7 @@
       </div>
 
       <div class="forge-step reveal">
-        <h3>04 — Electronics</h3>
+        <h3>05 — Electronics</h3>
         <p class="forge-step__hint">Only components relevant to your platform are shown.</p>
         <div class="forge-grid">
           <div class="forge-field"><label for="forge-battery">Battery</label><div class="select-field"><select id="forge-battery"></select></div></div>
@@ -116,7 +145,7 @@
       </div>
 
       <div class="forge-step reveal">
-        <h3>05 — Power &amp; Accessories</h3>
+        <h3>06 — Power &amp; Accessories</h3>
         <p class="forge-step__hint">Power distribution, FPV extras and mounting hardware.</p>
         <div class="forge-grid">
           <div class="forge-field"><label for="forge-power">Power Module</label><div class="select-field"><select id="forge-power"></select></div></div>
@@ -135,7 +164,7 @@
       </div>
 
       <div class="forge-step reveal">
-        <h3>06 — Communication</h3>
+        <h3>07 — Communication</h3>
         <p class="forge-step__hint">Select a protocol, then a matching receiver.</p>
         <div class="forge-pills" id="forge-protocols"></div>
         <div class="forge-field" style="margin-top:1.2rem; max-width:320px;">
