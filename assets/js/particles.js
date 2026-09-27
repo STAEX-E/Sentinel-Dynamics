@@ -1,7 +1,9 @@
 /* ============================================================
    Sentinel Dynamics — Particle systems
-   1) Ambient background field (all pages)
-   2) Hero twin-formation field (home page only)
+   1) Ambient background field (all pages) — dots that just drift,
+      never assembling into anything.
+   2) Opening sequence (home page only) — a few swarm drones fly
+      around a full-screen splash before the home page is revealed.
    Pure canvas 2D, no dependencies.
    ============================================================ */
 
@@ -120,16 +122,8 @@
     if (reduceMotion) tick(0);
   }
 
-  /* ---------------- Hero twin-formation field ----------------
-     Two independent silhouettes assemble on either side of the
-     hero title (never behind it) and slowly counter-rotate in
-     place. Each side picks a random shape — plane, one of several
-     drone variants, or a helicopter — fresh on every page load. */
-
-  const SHAPE_POOL = ["plane", "quad", "hexa", "fpv", "octo", "heli"];
-  function pickShape() {
-    return SHAPE_POOL[Math.floor(Math.random() * SHAPE_POOL.length)];
-  }
+  /* ---------------- Shared shape renderers ----------------
+     Used by the opening sequence's flying swarm drones. */
 
   const DRONE_ARM_DEFS = {
     quad: { count: 4, angleOffset: Math.PI / 4, armLen: 0.4, armW: 0.05, podR: 0.095, bodyR: 0.11 },
@@ -162,238 +156,95 @@
     }
   }
 
-  // Stylized top-down fixed-wing silhouette (normalized -0.5..0.5)
-  const PLANE_SHAPE = [
-    [0, -0.5], [0.045, -0.28], [0.05, -0.05],
-    [0.52, 0.1], [0.52, 0.17], [0.07, 0.08],
-    [0.09, 0.27], [0.24, 0.4], [0.24, 0.46],
-    [0.05, 0.37], [0.04, 0.5], [-0.04, 0.5],
-    [-0.05, 0.37], [-0.24, 0.46], [-0.24, 0.4],
-    [-0.09, 0.27], [-0.07, 0.08], [-0.52, 0.17],
-    [-0.52, 0.1], [-0.05, -0.05], [-0.045, -0.28],
-  ];
+  /* ---------------- Opening sequence ----------------
+     A handful of swarm drones fly around a full-screen splash for a
+     couple of seconds, then fade out to reveal the actual home page.
+     The home page itself has no special hero particles — just the
+     ambient background field drifting behind it like every other page. */
+  function initIntroSequence() {
+    const overlay = document.getElementById("intro-overlay");
+    const canvas = document.getElementById("intro-canvas");
+    if (!overlay || !canvas) return;
 
-  function drawPlaneShape(octx, cx, cy, s, fillStyle) {
-    octx.fillStyle = fillStyle || "#fff";
-    octx.beginPath();
-    octx.moveTo(cx + PLANE_SHAPE[0][0] * s, cy + PLANE_SHAPE[0][1] * s);
-    for (let i = 1; i < PLANE_SHAPE.length; i++) {
-      octx.lineTo(cx + PLANE_SHAPE[i][0] * s, cy + PLANE_SHAPE[i][1] * s);
+    if (reduceMotion) {
+      overlay.remove();
+      return;
     }
-    octx.closePath();
-    octx.fill();
-  }
 
-  // Top-down helicopter: rotor cross + hub, fuselage, tail boom, tail rotor.
-  function drawHelicopterShape(octx, cx, cy, s, fillStyle) {
-    octx.fillStyle = fillStyle || "#fff";
-    octx.save();
-    octx.translate(cx, cy);
-
-    octx.fillRect(-0.42 * s, -0.035 * s, 0.84 * s, 0.07 * s);
-    octx.save();
-    octx.rotate(Math.PI / 2);
-    octx.fillRect(-0.42 * s, -0.035 * s, 0.84 * s, 0.07 * s);
-    octx.restore();
-    octx.beginPath();
-    octx.arc(0, 0, 0.07 * s, 0, Math.PI * 2);
-    octx.fill();
-
-    octx.beginPath();
-    octx.ellipse(0, 0.16 * s, 0.09 * s, 0.22 * s, 0, 0, Math.PI * 2);
-    octx.fill();
-
-    octx.fillRect(-0.02 * s, 0.16 * s, 0.04 * s, 0.34 * s);
-
-    octx.save();
-    octx.translate(0, 0.5 * s);
-    octx.fillRect(-0.09 * s, -0.015 * s, 0.18 * s, 0.03 * s);
-    octx.beginPath();
-    octx.arc(0, 0, 0.025 * s, 0, Math.PI * 2);
-    octx.fill();
-    octx.restore();
-
-    octx.restore();
-  }
-
-  function drawShape(octx, cx, cy, s, shapeKey, fillStyle) {
-    if (shapeKey === "plane") drawPlaneShape(octx, cx, cy, s, fillStyle);
-    else if (shapeKey === "heli") drawHelicopterShape(octx, cx, cy, s, fillStyle);
-    else drawDroneShape(octx, cx, cy, s, shapeKey, fillStyle);
-  }
-
-  function buildShapePoints(width, height, count, cx, cy, size, shapeKey) {
-    const off = document.createElement("canvas");
-    off.width = width;
-    off.height = height;
-    const octx = off.getContext("2d");
-
-    drawShape(octx, cx, cy, size, shapeKey);
-
-    const data = octx.getImageData(0, 0, width, height).data;
-    const candidates = [];
-    const step = 3;
-    const minX = Math.max(0, Math.floor(cx - size * 0.6));
-    const maxX = Math.min(width, Math.ceil(cx + size * 0.6));
-    const minY = Math.max(0, Math.floor(cy - size * 0.6));
-    const maxY = Math.min(height, Math.ceil(cy + size * 0.6));
-    for (let y = minY; y < maxY; y += step) {
-      for (let x = minX; x < maxX; x += step) {
-        const idx = (y * width + x) * 4 + 3;
-        if (data[idx] > 128) candidates.push({ x, y });
-      }
-    }
-    for (let i = candidates.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [candidates[i], candidates[j]] = [candidates[j], candidates[i]];
-    }
-    const points = [];
-    for (let i = 0; i < count; i++) {
-      points.push(candidates[i % candidates.length] || { x: cx, y: cy });
-    }
-    return points;
-  }
-
-  function initHeroField() {
-    const canvas = document.getElementById("hero-canvas");
-    if (!canvas) return;
     const ctx = canvas.getContext("2d");
-    let w, h, particles = [];
-    let formationSize = 0;
-    const COUNT = window.innerWidth < 640 ? 240 : 480;
-
-    // Rotation directions differ so the two sides don't mirror each other.
-    const leftShape = pickShape();
-    const rightShape = pickShape();
-    const leftSpin = 1;
-    const rightSpin = -1;
-
-    let leftCenter = { x: 0, y: 0 };
-    let rightCenter = { x: 0, y: 0 };
-
-    function layout() {
+    let w, h;
+    function resize() {
       w = canvas.width = window.innerWidth * DPR;
       h = canvas.height = window.innerHeight * DPR;
       canvas.style.width = window.innerWidth + "px";
       canvas.style.height = window.innerHeight + "px";
-
-      const narrow = window.innerWidth < 768;
-      const size = Math.min(w, h) * (narrow ? 0.24 : 0.32);
-      formationSize = size;
-      const cy = h * 0.46;
-      const leftCx = w * (narrow ? 0.12 : 0.16);
-      const rightCx = w * (narrow ? 0.88 : 0.84);
-      leftCenter = { x: leftCx, y: cy };
-      rightCenter = { x: rightCx, y: cy };
-
-      const half = Math.round(COUNT / 2);
-      const leftTargets = buildShapePoints(w, h, half, leftCx, cy, size, leftShape);
-      const rightTargets = buildShapePoints(w, h, COUNT - half, rightCx, cy, size, rightShape);
-
-      function toParticle(t, center, spin) {
-        return {
-          tx: t.x,
-          ty: t.y,
-          ox: t.x - center.x,
-          oy: t.y - center.y,
-          cx: center.x,
-          cy: center.y,
-          spin,
-          sx: Math.random() * w,
-          sy: Math.random() * h,
-          r: (Math.random() * 1.5 + 0.7) * DPR,
-          phase: Math.random() * Math.PI * 2,
-          speed: 0.6 + Math.random() * 0.8,
-          hue: Math.random() > 0.75 ? "o" : "y",
-        };
-      }
-
-      particles = leftTargets.map((t) => toParticle(t, leftCenter, leftSpin))
-        .concat(rightTargets.map((t) => toParticle(t, rightCenter, rightSpin)));
     }
+    resize();
+    window.addEventListener("resize", resize);
 
-    let mx = 0, my = 0;
-    window.addEventListener("mousemove", (e) => {
-      mx = (e.clientX / window.innerWidth - 0.5) * 26;
-      my = (e.clientY / window.innerHeight - 0.5) * 26;
+    const DRONE_SHAPES = ["quad", "hexa", "fpv", "octo"];
+    const DURATION = 2600;
+    const FADE = 700;
+    let start = null;
+    let done = false;
+
+    const drones = Array.from({ length: 6 }, () => {
+      const angle = Math.random() * Math.PI * 2;
+      const speed = (0.32 + Math.random() * 0.3) * DPR;
+      return {
+        shape: DRONE_SHAPES[Math.floor(Math.random() * DRONE_SHAPES.length)],
+        x: Math.random() * w,
+        y: Math.random() * h,
+        vx: Math.cos(angle) * speed,
+        vy: Math.sin(angle) * speed,
+        size: (26 + Math.random() * 20) * DPR,
+        wobble: Math.random() * Math.PI * 2,
+        wobbleSpeed: 0.0018 + Math.random() * 0.0018,
+        color: Math.random() > 0.7 ? "rgba(255,122,26,0.92)" : "rgba(244,197,24,0.92)",
+      };
     });
 
-    // Formations assemble automatically right after load — no scroll required.
-    const ASSEMBLE_MS = 1800;
-    let assembleStart = null;
-
-    function progress(t) {
-      if (assembleStart === null) assembleStart = t;
-      return Math.max(0, Math.min(1, (t - assembleStart) / ASSEMBLE_MS));
-    }
-
-    function ease(t) { return 1 - Math.pow(1 - t, 3); }
-
-    // Slow continuous rotation once assembled — a full turn takes ~100s.
-    const ROT_SPEED = (Math.PI * 2) / 100000;
-
-    // Once a formation is mostly assembled, paint the actual solid
-    // silhouette on top of the dust so it unmistakably reads as the
-    // chosen plane/drone/helicopter rather than a loose dot cloud.
-    function drawFormationOverlay(t, p, center, spin, shapeKey) {
-      const solidP = Math.max(0, Math.min(1, (p - 0.45) / 0.55));
-      if (solidP <= 0) return;
-      const theta = t * ROT_SPEED * spin;
-      const ox = mx * DPR * (0.4 + p * 0.6);
-      const oy = my * DPR * (0.4 + p * 0.6);
-      ctx.save();
-      ctx.translate(center.x + ox, center.y + oy);
-      ctx.rotate(theta);
-      const grad = ctx.createLinearGradient(-formationSize * 0.5, -formationSize * 0.5, formationSize * 0.5, formationSize * 0.5);
-      grad.addColorStop(0, `rgba(244,197,24,${(0.82 * solidP).toFixed(3)})`);
-      grad.addColorStop(1, `rgba(255,122,26,${(0.82 * solidP).toFixed(3)})`);
-      drawShape(ctx, 0, 0, formationSize, shapeKey, grad);
-      ctx.restore();
+    function finish() {
+      if (done) return;
+      done = true;
+      overlay.classList.add("is-hidden");
+      window.removeEventListener("resize", resize);
+      setTimeout(() => overlay.remove(), FADE + 150);
     }
 
     function tick(t) {
-      const p = ease(progress(t));
+      if (start === null) start = t;
+      const elapsed = t - start;
       ctx.clearRect(0, 0, w, h);
-      drawFormationOverlay(t, p, leftCenter, leftSpin, leftShape);
-      drawFormationOverlay(t, p, rightCenter, rightSpin, rightShape);
-      for (const pt of particles) {
-        const idleX = Math.sin(t * 0.0006 * pt.speed + pt.phase) * 3 * DPR;
-        const idleY = Math.cos(t * 0.0007 * pt.speed + pt.phase) * 3 * DPR;
 
-        const theta = t * ROT_SPEED * pt.spin;
-        const cosT = Math.cos(theta), sinT = Math.sin(theta);
-        const rtx = pt.cx + pt.ox * cosT - pt.oy * sinT;
-        const rty = pt.cy + pt.ox * sinT + pt.oy * cosT;
+      for (const d of drones) {
+        d.vx += Math.sin(t * d.wobbleSpeed + d.wobble) * 0.012 * DPR;
+        d.vy += Math.cos(t * d.wobbleSpeed + d.wobble) * 0.012 * DPR;
+        d.x += d.vx;
+        d.y += d.vy;
+        if (d.x < -50 * DPR) d.x = w + 50 * DPR;
+        if (d.x > w + 50 * DPR) d.x = -50 * DPR;
+        if (d.y < -50 * DPR) d.y = h + 50 * DPR;
+        if (d.y > h + 50 * DPR) d.y = -50 * DPR;
 
-        const baseX = pt.sx + (rtx - pt.sx) * p;
-        const baseY = pt.sy + (rty - pt.sy) * p;
-        const px = baseX + idleX * p + mx * DPR * (0.4 + p * 0.6);
-        const py = baseY + idleY * p + my * DPR * (0.4 + p * 0.6);
-
-        ctx.beginPath();
-        const alpha = 0.35 + 0.5 * p;
-        ctx.fillStyle = pt.hue === "o"
-          ? `rgba(255,122,26,${alpha})`
-          : `rgba(244,197,24,${alpha})`;
-        ctx.arc(px, py, pt.r, 0, Math.PI * 2);
-        ctx.fill();
+        const heading = Math.atan2(d.vy, d.vx) + Math.PI / 2;
+        ctx.save();
+        ctx.translate(d.x, d.y);
+        ctx.rotate(heading);
+        drawDroneShape(ctx, 0, 0, d.size, d.shape, d.color);
+        ctx.restore();
       }
-      if (!reduceMotion) requestAnimationFrame(tick);
+
+      if (!done && elapsed >= DURATION) finish();
+      if (!done) requestAnimationFrame(tick);
     }
 
-    layout();
-    window.addEventListener("resize", layout);
     requestAnimationFrame(tick);
-    if (reduceMotion) {
-      // snap straight to the formed (unrotated) silhouettes for reduced-motion users
-      for (const pt of particles) { pt.sx = pt.cx + pt.ox; pt.sy = pt.cy + pt.oy; }
-      assembleStart = -ASSEMBLE_MS * 2;
-      tick(0);
-    }
+    overlay.addEventListener("click", finish, { once: true });
   }
 
   document.addEventListener("DOMContentLoaded", () => {
     initBackgroundField();
-    initHeroField();
+    initIntroSequence();
   });
 })();
