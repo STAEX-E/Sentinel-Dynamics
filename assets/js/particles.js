@@ -21,7 +21,7 @@
     let nextStreakAt = 0;
 
     function maybeSpawnStreak(t) {
-      if (reduceMotion || t < nextStreakAt || streaks.length >= 4) return;
+      if (reduceMotion || t < nextStreakAt || streaks.length >= 6) return;
       const dir = Math.random() < 0.5 ? 1 : -1;
       const speed = (3.2 + Math.random() * 2.4) * DPR;
       streaks.push({
@@ -33,7 +33,7 @@
         life: 0,
         maxLife: 40 + Math.random() * 26,
       });
-      nextStreakAt = t + 700 + Math.random() * 1600;
+      nextStreakAt = t + 300 + Math.random() * 700;
     }
 
     function drawStreaks(t) {

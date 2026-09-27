@@ -257,6 +257,7 @@
       highlights: ["Up to 10 km", "±1 m Accuracy", "Tripod / Vehicle"],
       priceINR: 980000,
       configurable: false,
+      photos: ["assets/img/products/lrf-1.webp", "assets/img/products/lrf-2.webp"],
     },
   ];
 
