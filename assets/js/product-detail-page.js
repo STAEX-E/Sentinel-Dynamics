@@ -61,6 +61,12 @@
     visual.innerHTML = window.SentinelIcons.svg(product.icon);
   }
 
+  const qtyHint = document.getElementById("pd-qty-hint");
+  if (product.category === "swarm") {
+    qtyHint.textContent = "Priced per drone — set the number of drones you want in your swarm below.";
+    qtyHint.style.display = "";
+  }
+
   const statusLine = document.getElementById("pd-status-line");
   const statusClass = product.status === "concept" ? "status-badge--concept" : "status-badge--active";
   const statusLabel = product.status === "concept" ? "CONCEPT" : "ACTIVE";

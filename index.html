@@ -78,7 +78,7 @@
 
     <div class="stats reveal">
       <div class="stat">
-        <div class="stat__num">15</div>
+        <div class="stat__num">18</div>
         <div class="stat__label">Catalog Platforms</div>
       </div>
       <div class="stat">
@@ -90,7 +90,7 @@
         <div class="stat__label">Vertical Integration</div>
       </div>
       <div class="stat">
-        <div class="stat__num">04</div>
+        <div class="stat__num">05</div>
         <div class="stat__label">System Categories</div>
       </div>
     </div>
@@ -186,8 +186,8 @@
   <div class="container">
     <div class="section-head reveal">
       <p class="eyebrow">Explore By Category</p>
-      <h2>One core. Four categories of unmanned systems.</h2>
-      <p class="lead">VTOLs, FPV, Interceptors and Counter-UAS platforms — every category shares the same design core: shared avionics, shared manufacturing discipline, and a single flight-test pipeline. Select a category to explore its platforms.</p>
+      <h2>One core. Five categories of unmanned systems.</h2>
+      <p class="lead">VTOLs, FPV, Swarm Drones, Interceptors and Counter-UAS platforms — every category shares the same design core: shared avionics, shared manufacturing discipline, and a single flight-test pipeline. Select a category to explore its platforms.</p>
     </div>
 
     <div class="panel network-card reveal">
@@ -209,6 +209,11 @@
               <stop offset="50%" style="stop-color:var(--c-yellow)" stop-opacity="0.85"/>
               <stop offset="100%" style="stop-color:var(--c-yellow)" stop-opacity="0"/>
             </linearGradient>
+            <linearGradient id="netgrad-4" gradientUnits="userSpaceOnUse" x1="314" y1="205" x2="480" y2="205">
+              <stop offset="0%" style="stop-color:var(--c-orange)" stop-opacity="0"/>
+              <stop offset="50%" style="stop-color:var(--c-orange)" stop-opacity="0.85"/>
+              <stop offset="100%" style="stop-color:var(--c-orange)" stop-opacity="0"/>
+            </linearGradient>
             <linearGradient id="netgrad-5" gradientUnits="userSpaceOnUse" x1="282" y1="205" x2="282" y2="360">
               <stop offset="0%" style="stop-color:var(--c-yellow)" stop-opacity="0"/>
               <stop offset="50%" style="stop-color:var(--c-yellow)" stop-opacity="0.85"/>
@@ -219,12 +224,14 @@
           <path d="M 270 205 V 105 Q 270 90 255 90 H 110" stroke="var(--c-border)" stroke-width="1.5" fill="none"/>
           <path d="M 294 205 V 85 Q 294 70 309 70 H 360" stroke="var(--c-border)" stroke-width="1.5" fill="none"/>
           <path d="M 250 205 H 160" stroke="var(--c-border)" stroke-width="1.5" fill="none"/>
+          <path d="M 314 205 H 480" stroke="var(--c-border)" stroke-width="1.5" fill="none"/>
           <path d="M 282 205 V 360" stroke="var(--c-border)" stroke-width="1.5" fill="none"/>
 
           <path class="network-path-flow" d="M 270 205 V 105 Q 270 90 255 90 H 110" stroke="url(#netgrad-1)" style="animation-delay:0s"/>
           <path class="network-path-flow" d="M 294 205 V 85 Q 294 70 309 70 H 360" stroke="url(#netgrad-2)" style="animation-delay:.6s"/>
           <path class="network-path-flow" d="M 250 205 H 160" stroke="url(#netgrad-3)" style="animation-delay:1.2s"/>
-          <path class="network-path-flow" d="M 282 205 V 360" stroke="url(#netgrad-5)" style="animation-delay:1.8s"/>
+          <path class="network-path-flow" d="M 314 205 H 480" stroke="url(#netgrad-4)" style="animation-delay:1.8s"/>
+          <path class="network-path-flow" d="M 282 205 V 360" stroke="url(#netgrad-5)" style="animation-delay:2.4s"/>
         </svg>
 
         <div class="network-hub" aria-hidden="true"><span class="mark-lg"></span></div>
@@ -260,6 +267,16 @@
             </svg>
           </div>
           <span class="network-node__label">Counter-UAS</span>
+        </a>
+
+        <!-- Swarm Drones — mid-right, x480 y205 -->
+        <a class="network-node" href="products.html?category=swarm" style="left:85.1%; top:50%;">
+          <div class="network-node__badge" style="color:var(--c-orange)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="6" cy="6" r="2"/><circle cx="18" cy="6" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="6" cy="18" r="2"/><circle cx="18" cy="18" r="2"/>
+            </svg>
+          </div>
+          <span class="network-node__label">Swarm Drones</span>
         </a>
 
         <!-- VTOLs — bottom-center, x282 y360 -->

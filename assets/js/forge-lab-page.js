@@ -38,7 +38,7 @@
   }
 
   const PLATFORM_OVERRIDE = {};
-  const CATEGORY_DEFAULT_PLATFORM = { vtol: "vtol", fpv: "fpv", interceptor: "fpv" };
+  const CATEGORY_DEFAULT_PLATFORM = { vtol: "vtol", fpv: "fpv", interceptor: "fpv", swarm: "fpv" };
 
   function defaultPlatformForProduct(p) {
     if (PLATFORM_OVERRIDE[p.id]) return PLATFORM_OVERRIDE[p.id];
