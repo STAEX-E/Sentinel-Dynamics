@@ -316,17 +316,13 @@
       my = (e.clientY / window.innerHeight - 0.5) * 26;
     });
 
-    const pinWrap = document.getElementById("hero-pin-wrap");
+    // Formations assemble automatically right after load — no scroll required.
+    const ASSEMBLE_MS = 1800;
+    let assembleStart = null;
 
-    function progress() {
-      if (!pinWrap) {
-        const p = window.scrollY / (window.innerHeight * 0.85);
-        return Math.max(0, Math.min(1, p));
-      }
-      const rect = pinWrap.getBoundingClientRect();
-      const scrollable = rect.height - window.innerHeight;
-      if (scrollable <= 0) return 1;
-      return Math.max(0, Math.min(1, -rect.top / scrollable));
+    function progress(t) {
+      if (assembleStart === null) assembleStart = t;
+      return Math.max(0, Math.min(1, (t - assembleStart) / ASSEMBLE_MS));
     }
 
     function ease(t) { return 1 - Math.pow(1 - t, 3); }
@@ -335,7 +331,7 @@
     const ROT_SPEED = (Math.PI * 2) / 100000;
 
     function tick(t) {
-      const p = ease(progress());
+      const p = ease(progress(t));
       ctx.clearRect(0, 0, w, h);
       for (const pt of particles) {
         const idleX = Math.sin(t * 0.0006 * pt.speed + pt.phase) * 3 * DPR;
