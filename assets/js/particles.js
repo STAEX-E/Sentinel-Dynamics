@@ -138,9 +138,9 @@
     octo: { count: 8, angleOffset: Math.PI / 8, armLen: 0.4, armW: 0.04, podR: 0.062, bodyR: 0.13 },
   };
 
-  function drawDroneShape(octx, cx, cy, s, variant) {
+  function drawDroneShape(octx, cx, cy, s, variant, fillStyle) {
     const def = DRONE_ARM_DEFS[variant] || DRONE_ARM_DEFS.quad;
-    octx.fillStyle = "#fff";
+    octx.fillStyle = fillStyle || "#fff";
 
     octx.beginPath();
     octx.arc(cx, cy, def.bodyR * s, 0, Math.PI * 2);
@@ -173,8 +173,8 @@
     [-0.52, 0.1], [-0.05, -0.05], [-0.045, -0.28],
   ];
 
-  function drawPlaneShape(octx, cx, cy, s) {
-    octx.fillStyle = "#fff";
+  function drawPlaneShape(octx, cx, cy, s, fillStyle) {
+    octx.fillStyle = fillStyle || "#fff";
     octx.beginPath();
     octx.moveTo(cx + PLANE_SHAPE[0][0] * s, cy + PLANE_SHAPE[0][1] * s);
     for (let i = 1; i < PLANE_SHAPE.length; i++) {
@@ -185,8 +185,8 @@
   }
 
   // Top-down helicopter: rotor cross + hub, fuselage, tail boom, tail rotor.
-  function drawHelicopterShape(octx, cx, cy, s) {
-    octx.fillStyle = "#fff";
+  function drawHelicopterShape(octx, cx, cy, s, fillStyle) {
+    octx.fillStyle = fillStyle || "#fff";
     octx.save();
     octx.translate(cx, cy);
 
@@ -216,10 +216,10 @@
     octx.restore();
   }
 
-  function drawShape(octx, cx, cy, s, shapeKey) {
-    if (shapeKey === "plane") drawPlaneShape(octx, cx, cy, s);
-    else if (shapeKey === "heli") drawHelicopterShape(octx, cx, cy, s);
-    else drawDroneShape(octx, cx, cy, s, shapeKey);
+  function drawShape(octx, cx, cy, s, shapeKey, fillStyle) {
+    if (shapeKey === "plane") drawPlaneShape(octx, cx, cy, s, fillStyle);
+    else if (shapeKey === "heli") drawHelicopterShape(octx, cx, cy, s, fillStyle);
+    else drawDroneShape(octx, cx, cy, s, shapeKey, fillStyle);
   }
 
   function buildShapePoints(width, height, count, cx, cy, size, shapeKey) {
@@ -259,6 +259,7 @@
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
     let w, h, particles = [];
+    let formationSize = 0;
     const COUNT = window.innerWidth < 640 ? 240 : 480;
 
     // Rotation directions differ so the two sides don't mirror each other.
@@ -278,6 +279,7 @@
 
       const narrow = window.innerWidth < 768;
       const size = Math.min(w, h) * (narrow ? 0.24 : 0.32);
+      formationSize = size;
       const cy = h * 0.46;
       const leftCx = w * (narrow ? 0.12 : 0.16);
       const rightCx = w * (narrow ? 0.88 : 0.84);
@@ -330,9 +332,30 @@
     // Slow continuous rotation once assembled — a full turn takes ~100s.
     const ROT_SPEED = (Math.PI * 2) / 100000;
 
+    // Once a formation is mostly assembled, paint the actual solid
+    // silhouette on top of the dust so it unmistakably reads as the
+    // chosen plane/drone/helicopter rather than a loose dot cloud.
+    function drawFormationOverlay(t, p, center, spin, shapeKey) {
+      const solidP = Math.max(0, Math.min(1, (p - 0.45) / 0.55));
+      if (solidP <= 0) return;
+      const theta = t * ROT_SPEED * spin;
+      const ox = mx * DPR * (0.4 + p * 0.6);
+      const oy = my * DPR * (0.4 + p * 0.6);
+      ctx.save();
+      ctx.translate(center.x + ox, center.y + oy);
+      ctx.rotate(theta);
+      const grad = ctx.createLinearGradient(-formationSize * 0.5, -formationSize * 0.5, formationSize * 0.5, formationSize * 0.5);
+      grad.addColorStop(0, `rgba(244,197,24,${(0.82 * solidP).toFixed(3)})`);
+      grad.addColorStop(1, `rgba(255,122,26,${(0.82 * solidP).toFixed(3)})`);
+      drawShape(ctx, 0, 0, formationSize, shapeKey, grad);
+      ctx.restore();
+    }
+
     function tick(t) {
       const p = ease(progress(t));
       ctx.clearRect(0, 0, w, h);
+      drawFormationOverlay(t, p, leftCenter, leftSpin, leftShape);
+      drawFormationOverlay(t, p, rightCenter, rightSpin, rightShape);
       for (const pt of particles) {
         const idleX = Math.sin(t * 0.0006 * pt.speed + pt.phase) * 3 * DPR;
         const idleY = Math.cos(t * 0.0007 * pt.speed + pt.phase) * 3 * DPR;
@@ -364,6 +387,7 @@
     if (reduceMotion) {
       // snap straight to the formed (unrotated) silhouettes for reduced-motion users
       for (const pt of particles) { pt.sx = pt.cx + pt.ox; pt.sy = pt.cy + pt.oy; }
+      assembleStart = -ASSEMBLE_MS * 2;
       tick(0);
     }
   }
