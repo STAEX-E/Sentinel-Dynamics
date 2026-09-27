@@ -23,7 +23,7 @@
     },
     {
       q: "How does the procurement process work?",
-      a: "See the Business Model page for the full journey. In short: requirement, engineering, demonstration, tendering and bidding, procurement, production and delivery, training and deployment, and lifetime support.",
+      a: "See the Business Model page for the full journey. In short: requirement, engineering, demonstration, eligibility verification, direct procurement, production and delivery, training and deployment, and lifetime support.",
     },
     {
       q: "Do you offer support after delivery?",

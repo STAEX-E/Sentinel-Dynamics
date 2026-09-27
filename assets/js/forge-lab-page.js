@@ -37,8 +37,8 @@
     return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">' + (FPV_STYLE_ICONS[key] || "") + "</svg>";
   }
 
-  const PLATFORM_OVERRIDE = { "uas-15-surveillance": "hexacopter", "drone-atlas-cargo": "octacopter" };
-  const CATEGORY_DEFAULT_PLATFORM = { vtol: "vtol", fpv: "fpv", drone: "hexacopter", uas: "fixed-wing", "counter-uas": "interceptor" };
+  const PLATFORM_OVERRIDE = {};
+  const CATEGORY_DEFAULT_PLATFORM = { vtol: "vtol", fpv: "fpv", interceptor: "fpv" };
 
   function defaultPlatformForProduct(p) {
     if (PLATFORM_OVERRIDE[p.id]) return PLATFORM_OVERRIDE[p.id];

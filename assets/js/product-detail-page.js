@@ -37,7 +37,29 @@
   document.getElementById("pd-description").textContent = product.description;
 
   const visual = document.getElementById("pd-visual");
-  visual.innerHTML = window.SentinelIcons.svg(product.icon);
+  const thumbsEl = document.getElementById("pd-gallery-thumbs");
+
+  function showPhoto(src) {
+    visual.innerHTML = `<img src="${window.escapeHtml(src)}" alt="${window.escapeHtml(product.name)}" style="width:100%;height:100%;object-fit:cover;">`;
+  }
+
+  if (product.photos && product.photos.length) {
+    showPhoto(product.photos[0]);
+    if (product.photos.length > 1) {
+      thumbsEl.innerHTML = product.photos
+        .map((src, i) => `<img src="${window.escapeHtml(src)}" data-src="${window.escapeHtml(src)}" class="${i === 0 ? "is-active" : ""}" alt="${window.escapeHtml(product.name)} — view ${i + 1}">`)
+        .join("");
+      thumbsEl.querySelectorAll("img").forEach((thumb) => {
+        thumb.addEventListener("click", () => {
+          showPhoto(thumb.dataset.src);
+          thumbsEl.querySelectorAll("img").forEach((t) => t.classList.remove("is-active"));
+          thumb.classList.add("is-active");
+        });
+      });
+    }
+  } else {
+    visual.innerHTML = window.SentinelIcons.svg(product.icon);
+  }
 
   const statusLine = document.getElementById("pd-status-line");
   const statusClass = product.status === "concept" ? "status-badge--concept" : "status-badge--active";

@@ -24,7 +24,13 @@
     <a href="products.html" aria-current="page">Products</a>
     <a href="forge-lab.html">Forge Lab</a>
     <a href="business-model.html">Business Model</a>
-    <a href="about.html">About Us</a>
+    <div class="nav__dropdown">
+      <a href="about.html" class="nav__dropdown-trigger">About Us</a>
+      <div class="nav__dropdown-menu">
+        <a href="about.html">About Us</a>
+        <a href="gallery.html">Gallery</a>
+      </div>
+    </div>
     </div>
     <div class="nav__utility">
       <a href="product-search.html" class="nav__icon-btn" aria-label="Search Products" title="Search Products">
@@ -55,10 +61,9 @@
         <select id="category-filter" aria-label="Filter by category">
           <option value="all">All Categories</option>
           <option value="vtol">VTOLs</option>
-          <option value="counter-uas">Counter-UAS</option>
-          <option value="uas">UAS</option>
-          <option value="drone">Drones</option>
           <option value="fpv">FPV</option>
+          <option value="interceptor">Interceptors</option>
+          <option value="counter-uas">Counter-UAS</option>
         </select>
       </div>
       <div class="products-toolbar__count"><strong id="products-count">0</strong> platforms shown</div>
@@ -95,7 +100,7 @@
     <a href="customer-service.html">Customer Service</a>
     <a href="about.html">About Us</a>
   </nav>
-  <div class="foot__meta">Independent Aerospace &amp; Defense Technology</div>
+  <div class="foot__meta">Aerospace &amp; Defense Technology</div>
 </footer>
 
 <script src="assets/js/products-data.js"></script>

@@ -96,6 +96,10 @@
     form.addEventListener("submit", (e) => {
       e.preventDefault();
       if (items.length === 0) return;
+      if (window.SentinelVerify && !window.SentinelVerify.isVerified()) {
+        window.SentinelVerify.lockPageUntilVerified();
+        return;
+      }
 
       const ref = genReference();
 

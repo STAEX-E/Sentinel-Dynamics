@@ -1,8 +1,9 @@
 /* ============================================================
    Sentinel Dynamics — Gallery
-   Placeholder tiles (icon + gradient) ready to swap for real
-   photography — full filtering, hover reveal and lightbox viewer
-   are fully functional now.
+   Real photography is used where supplied (e.g. the 7-inch
+   Interceptor); everything else uses icon+gradient placeholder
+   tiles ready to swap in as more photography is supplied.
+   Full filtering, hover reveal and lightbox viewer are functional.
    ============================================================ */
 
 (function () {
@@ -12,53 +13,60 @@
   if (!grid) return;
 
   const CATEGORY_ICON = {
-    aircraft: '<path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/>',
-    fpv: '<circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="1.8" fill="currentColor" stroke="none"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/>',
+    uav: '<path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/>',
     vtol: '<path d="M12 2 4 5v6c0 5 3.5 8.5 8 11 4.5-2.5 8-6 8-11V5l-8-3Z"/><path d="M9 12l2 2 4-4"/>',
+    fpv: '<circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="1.8" fill="currentColor" stroke="none"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/>',
+    interceptor: '<path d="M12 2v9M12 2l-3 4M12 2l3 4"/><path d="M4 13h16l-2 3H6Z"/><path d="M9 16v4M15 16v4"/>',
+    "counter-uas": '<circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="7" stroke-dasharray="2 3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/>',
     development: '<path d="M12 2v14M12 2l4 4M12 2 8 6"/><path d="M5 14a7 7 0 0 0 14 0"/>',
-    testing: '<path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/><path d="M9 12l2 2 4-4"/>',
+    "flight-ops": '<path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/><path d="M9 12l2 2 4-4"/>',
     exhibition: '<path d="M12 2 2 8h20L12 2Z"/><path d="M4 8v12M20 8v12M9 8v12M15 8v12"/><path d="M2 20h20"/>',
-    events: '<path d="M8 21h8M12 17v4"/><path d="M7 4h10v4a5 5 0 0 1-10 0V4Z"/><path d="M7 5H4a3 3 0 0 0 3 3M17 5h3a3 3 0 0 1-3 3"/>',
   };
 
   const CATEGORY_LABEL = {
-    aircraft: "Aircraft",
-    fpv: "FPV",
+    uav: "UAVs",
     vtol: "VTOL",
+    fpv: "FPV",
+    interceptor: "Interceptors",
+    "counter-uas": "Counter-UAS",
     development: "Development",
-    testing: "Testing",
-    exhibition: "Exhibition",
-    events: "Events",
+    "flight-ops": "Flight Operations",
+    exhibition: "Exhibition & Events",
   };
 
   const ITEMS = [
-    { id: 1, category: "aircraft", title: "10-Inch Tactical Drone — Airframe" },
-    { id: 2, category: "aircraft", title: "15-Inch Surveillance Platform" },
-    { id: 3, category: "aircraft", title: "Tailsitter VTOL — Full Assembly" },
-    { id: 4, category: "fpv", title: "7-Inch FPV Interceptor Build" },
-    { id: 5, category: "fpv", title: "5-Inch FPV Interceptor — Close-Up" },
-    { id: 6, category: "fpv", title: "FPV Bench Setup" },
-    { id: 7, category: "vtol", title: "ANIKETRA VTOL — Spatian Aviation Collaboration" },
-    { id: 8, category: "vtol", title: "VTOL Transition Test" },
-    { id: 9, category: "vtol", title: "VTOL Payload Bay" },
-    { id: 10, category: "development", title: "Airframe Design Review" },
-    { id: 11, category: "development", title: "Avionics Bench Integration" },
-    { id: 12, category: "development", title: "Prototype Fabrication" },
-    { id: 13, category: "testing", title: "Flight-Control Validation" },
-    { id: 14, category: "testing", title: "High-Speed Interceptor Test Run" },
-    { id: 15, category: "testing", title: "Thermal Payload Field Test" },
-    { id: 16, category: "exhibition", title: "HITEX Drone Expo, 2025" },
-    { id: 17, category: "exhibition", title: "Static Display — Fleet Lineup" },
-    { id: 18, category: "events", title: "DPS IT Fest Drone Competition, 2025" },
-    { id: 19, category: "events", title: "Team on the Show Floor" },
+    { id: 1, category: "uav", title: "VIEW VTOL — Full Assembly" },
+    { id: 2, category: "uav", title: "ATLAS VTOL — Cargo Configuration" },
+    { id: 3, category: "vtol", title: "ANIKETRA VTOL — Spatian Aviation Collaboration" },
+    { id: 4, category: "vtol", title: "Tail-Sitter VTOL — Transition Test" },
+    { id: 5, category: "vtol", title: "SENTRY VTOL — ISR Payload Bay" },
+    { id: 6, category: "fpv", title: "FPV 5\" — Bench Build" },
+    { id: 7, category: "fpv", title: "FPV 7\" — Racing Configuration" },
+    { id: 8, category: "fpv", title: "FPV 3.5\" — Micro Build" },
+    { id: 9, category: "interceptor", title: "Interceptor 7\" — Handheld", image: "assets/img/products/interceptor-7-1.jpg" },
+    { id: 10, category: "interceptor", title: "Interceptor 7\" — In Flight", image: "assets/img/products/interceptor-7-2.jpg" },
+    { id: 11, category: "interceptor", title: "Interceptor 5\" — Enclosed Body" },
+    { id: 12, category: "counter-uas", title: "Counter-UAS Jammer — Field Deployment" },
+    { id: 13, category: "counter-uas", title: "RF Detection System — Mobile Mount" },
+    { id: 14, category: "counter-uas", title: "Laser Range Finder — Targeting Trial" },
+    { id: 15, category: "development", title: "Airframe Design Review" },
+    { id: 16, category: "development", title: "Avionics Bench Integration" },
+    { id: 17, category: "flight-ops", title: "Flight-Control Validation" },
+    { id: 18, category: "flight-ops", title: "High-Speed Interceptor Test Run" },
+    { id: 19, category: "exhibition", title: "HITEX Drone Expo, 2025" },
+    { id: 20, category: "exhibition", title: "DPS IT Fest Drone Competition, 2025" },
   ];
 
   function svg(cat) {
     return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">' + (CATEGORY_ICON[cat] || "") + "</svg>";
   }
 
+  function visual(item) {
+    return item.image ? `<img src="${window.escapeHtml(item.image)}" alt="${window.escapeHtml(item.title)}">` : svg(item.category);
+  }
+
   const filtersEl = document.getElementById("gallery-filters");
-  const categories = ["all", "aircraft", "fpv", "vtol", "development", "testing", "exhibition", "events"];
+  const categories = ["all", "uav", "vtol", "fpv", "interceptor", "counter-uas", "development", "flight-ops", "exhibition"];
   let active = "all";
   let visibleItems = ITEMS;
   let lightboxIndex = 0;
@@ -81,7 +89,7 @@
     grid.innerHTML = visibleItems
       .map(
         (item, i) => `<div class="gallery-tile reveal" data-index="${i}">
-          <div class="gallery-tile__bg">${svg(item.category)}</div>
+          <div class="gallery-tile__bg">${visual(item)}</div>
           <div class="gallery-tile__overlay">
             <span class="gallery-tile__cat">${CATEGORY_LABEL[item.category]}</span>
             <span class="gallery-tile__title">${window.escapeHtml(item.title)}</span>
@@ -101,7 +109,7 @@
   function renderLightbox() {
     const item = visibleItems[lightboxIndex];
     if (!item) return;
-    stage.innerHTML = svg(item.category);
+    stage.innerHTML = visual(item);
     caption.textContent = CATEGORY_LABEL[item.category] + " — " + item.title;
   }
 

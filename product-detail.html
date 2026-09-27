@@ -24,7 +24,13 @@
     <a href="products.html" aria-current="page">Products</a>
     <a href="forge-lab.html">Forge Lab</a>
     <a href="business-model.html">Business Model</a>
-    <a href="about.html">About Us</a>
+    <div class="nav__dropdown">
+      <a href="about.html" class="nav__dropdown-trigger">About Us</a>
+      <div class="nav__dropdown-menu">
+        <a href="about.html">About Us</a>
+        <a href="gallery.html">Gallery</a>
+      </div>
+    </div>
     </div>
     <div class="nav__utility">
       <a href="product-search.html" class="nav__icon-btn" aria-label="Search Products" title="Search Products">
@@ -52,6 +58,7 @@
 <section id="detail">
   <div class="container">
     <div class="product-detail-visual reveal" id="pd-visual"></div>
+    <div class="pd-gallery-thumbs" id="pd-gallery-thumbs"></div>
 
     <div class="product-detail-body reveal">
       <div class="pd-status-line" id="pd-status-line"></div>
@@ -115,7 +122,7 @@
     <a href="customer-service.html">Customer Service</a>
     <a href="about.html">About Us</a>
   </nav>
-  <div class="foot__meta">Independent Aerospace &amp; Defense Technology</div>
+  <div class="foot__meta">Aerospace &amp; Defense Technology</div>
 </footer>
 
 <script src="assets/js/products-data.js"></script>
