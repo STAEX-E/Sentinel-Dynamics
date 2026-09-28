@@ -1712,6 +1712,15 @@ body.id-verify-locked > *:not(#id-verify-overlay) {
   transition: transform .5s var(--ease-out);
 }
 .product-tile:hover .product-tile__visual svg { transform: scale(1.08); }
+.product-tile__photo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform .5s var(--ease-out);
+}
+.product-tile:hover .product-tile__photo { transform: scale(1.06); }
 .product-tile__status {
   position: absolute;
   top: .8rem;

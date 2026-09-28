@@ -125,6 +125,7 @@
       description: "The smallest platform in the FPV line, sized for tight operating environments. The 3.5-inch frame runs on 3S–4S power for around 12 minutes of flight at up to 100 km/h, carrying a small explosive payload.",
       specs: { frame: "3.5-Inch", topSpeed: "100 km/h", battery: "3S–4S", endurance: "12 min", payload: "Small Explosive Payload", weight: "0.35 kg" },
       highlights: ["3.5-Inch", "100 km/h", "12 min"],
+      photos: ["assets/img/products/fpv-3-5-1.png"],
       priceINR: 68000,
       configurable: true,
     },
@@ -213,6 +214,7 @@
       description: "The enclosed-body counterpart to the FPV 3.5-inch platform. A protective airframe shell houses the same high-speed propulsion on a 65A ESC, running 4S power for around 10 minutes at up to 100 km/h.",
       specs: { frame: "3.5-Inch Enclosed", topSpeed: "100 km/h", battery: "4S", endurance: "10 min", esc: "65A ESC", payload: "Small Explosive Payload", weight: "0.5 kg" },
       highlights: ["3.5-Inch", "100 km/h", "65A ESC"],
+      photos: ["assets/img/products/fpv-3-5-1.png"],
       priceINR: 145000,
       configurable: true,
     },
@@ -324,11 +326,15 @@
     const chips = (p.highlights || []).slice(0, 3).map((h) => `<span class="spec-chip">${escapeHtml(h)}</span>`).join("");
     const configureHref = p.configurable ? `forge-lab.html?product=${encodeURIComponent(p.id)}` : "customer-service.html";
     const configureLabel = p.configurable ? "Configure" : "Request Info";
+    const hasPhoto = p.photos && p.photos.length;
+    const visual = hasPhoto
+      ? `<img class="product-tile__photo" src="${p.photos[0]}" alt="${escapeHtml(p.name)}" loading="lazy">`
+      : svg(p.icon);
     return `
     <article class="panel product-tile reveal" data-product-id="${p.id}" data-category="${p.category}">
       <div class="product-tile__visual">
         <span class="status-badge ${statusClass} product-tile__status">${statusLabel}</span>
-        ${svg(p.icon)}
+        ${visual}
       </div>
       <div class="product-tile__body">
         <span class="product-tile__category">${escapeHtml(CATEGORY_LABELS[p.category] || p.category)}</span>
