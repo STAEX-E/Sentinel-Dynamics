@@ -141,7 +141,7 @@
       specs: { frame: "5-Inch", topSpeed: "200 km/h", battery: "3S–6S", endurance: "18 min", payload: "Small Explosive Payload", weight: "0.9 kg" },
       highlights: ["5-Inch", "200 km/h", "18 min"],
       coverImage: "assets/img/products/fpv-5-1.png",
-      photos: ["assets/img/products/fpv-5-gallery-1.jpg", "assets/img/products/fpv-5-gallery-2.jpg"],
+      photos: ["assets/img/products/fpv-5-gallery-1.jpg", "assets/img/products/fpv-5-gallery-2.jpg", "assets/img/products/fpv-5-gallery-3.jpg"],
       priceINR: 96000,
       configurable: true,
     },
