@@ -1020,7 +1020,7 @@ footer nav a:hover { color: var(--c-yellow); }
   width: 100%;
   aspect-ratio: 16 / 8;
   border-radius: var(--radius-lg);
-  background: radial-gradient(circle at 50% 45%, rgba(244,197,24,.08), transparent 60%), var(--c-bg-soft);
+  background: var(--c-bg);
   border: 1px solid var(--c-border);
   display: flex;
   align-items: center;
@@ -1686,11 +1686,7 @@ body.id-verify-locked > *:not(#id-verify-overlay) {
 .product-tile__visual {
   position: relative;
   aspect-ratio: 4 / 3;
-  background:
-    radial-gradient(circle at 50% 38%, rgba(244,197,24,.14), transparent 62%),
-    repeating-linear-gradient(90deg, rgba(255,255,255,.03) 0 1px, transparent 1px 34px),
-    repeating-linear-gradient(0deg, rgba(255,255,255,.03) 0 1px, transparent 1px 34px),
-    linear-gradient(160deg, var(--c-bg-soft), var(--c-panel-2));
+  background: var(--c-bg);
   display: flex;
   align-items: center;
   justify-content: center;
