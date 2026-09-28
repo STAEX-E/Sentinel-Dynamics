@@ -140,6 +140,7 @@
       description: "A balanced, agile 5-inch FPV airframe. Running on 3S–6S power, it reaches up to 200 km/h with roughly 18 minutes of flight time, carrying a small explosive payload.",
       specs: { frame: "5-Inch", topSpeed: "200 km/h", battery: "3S–6S", endurance: "18 min", payload: "Small Explosive Payload", weight: "0.9 kg" },
       highlights: ["5-Inch", "200 km/h", "18 min"],
+      photos: ["assets/img/products/fpv-5-1.png", "assets/img/products/fpv-5-2.png"],
       priceINR: 96000,
       configurable: true,
     },
