@@ -140,7 +140,8 @@
       description: "A balanced, agile 5-inch FPV airframe. Running on 3S–6S power, it reaches up to 200 km/h with roughly 18 minutes of flight time, carrying a small explosive payload.",
       specs: { frame: "5-Inch", topSpeed: "200 km/h", battery: "3S–6S", endurance: "18 min", payload: "Small Explosive Payload", weight: "0.9 kg" },
       highlights: ["5-Inch", "200 km/h", "18 min"],
-      photos: ["assets/img/products/fpv-5-1.png", "assets/img/products/fpv-5-2.png"],
+      coverImage: "assets/img/products/fpv-5-1.png",
+      photos: ["assets/img/products/fpv-5-gallery-1.jpg", "assets/img/products/fpv-5-gallery-2.jpg"],
       priceINR: 96000,
       configurable: true,
     },
@@ -327,9 +328,9 @@
     const chips = (p.highlights || []).slice(0, 3).map((h) => `<span class="spec-chip">${escapeHtml(h)}</span>`).join("");
     const configureHref = p.configurable ? `forge-lab.html?product=${encodeURIComponent(p.id)}` : "customer-service.html";
     const configureLabel = p.configurable ? "Configure" : "Request Info";
-    const hasPhoto = p.photos && p.photos.length;
-    const visual = hasPhoto
-      ? `<img class="product-tile__photo" src="${p.photos[0]}" alt="${escapeHtml(p.name)}" loading="lazy">`
+    const tileImage = p.coverImage || (p.photos && p.photos[0]);
+    const visual = tileImage
+      ? `<img class="product-tile__photo" src="${tileImage}" alt="${escapeHtml(p.name)}" loading="lazy">`
       : svg(p.icon);
     return `
     <article class="panel product-tile reveal" data-product-id="${p.id}" data-category="${p.category}">
