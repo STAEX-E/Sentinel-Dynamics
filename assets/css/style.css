@@ -1679,6 +1679,7 @@ body.id-verify-locked > *:not(#id-verify-overlay) {
   background: linear-gradient(160deg, var(--c-panel), var(--c-bg-soft));
   overflow: hidden;
   transition: border-color .25s var(--ease-out);
+  cursor: pointer;
 }
 .product-tile:hover {
   border-color: var(--c-yellow);

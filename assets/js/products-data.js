@@ -159,6 +159,7 @@
       description: "The largest and longest-legged airframe in the FPV line. On 4S–6S power the 7-inch platform reaches up to 220 km/h with around 20 minutes of flight time, carrying a small explosive payload.",
       specs: { frame: "7-Inch", topSpeed: "220 km/h", battery: "4S–6S", endurance: "20 min", payload: "Small Explosive Payload", weight: "1.6 kg" },
       highlights: ["7-Inch", "220 km/h", "20 min"],
+      photos: ["assets/img/products/fpv-7-1.png"],
       priceINR: 148000,
       configurable: true,
     },
@@ -208,21 +209,6 @@
     },
 
     // ---------------- Interceptors (enclosed/body FPV configuration) ----------------
-    {
-      id: "interceptor-3-5",
-      name: "Interceptor 3.5\"",
-      category: "interceptor",
-      status: "active",
-      tag: "Interceptor · Enclosed Body",
-      icon: "interceptor",
-      short: "An enclosed-body 3.5-inch interceptor — 100 km/h on a 65A ESC.",
-      description: "The enclosed-body counterpart to the FPV 3.5-inch platform. A protective airframe shell houses the same high-speed propulsion on a 65A ESC, running 4S power for around 10 minutes at up to 100 km/h.",
-      specs: { frame: "3.5-Inch Enclosed", topSpeed: "100 km/h", battery: "4S", endurance: "10 min", esc: "65A ESC", payload: "Small Explosive Payload", weight: "0.5 kg" },
-      highlights: ["3.5-Inch", "100 km/h", "65A ESC"],
-      photos: ["assets/img/products/fpv-3-5-1.png"],
-      priceINR: 155000,
-      configurable: true,
-    },
     {
       id: "interceptor-5",
       name: "Interceptor 5\"",
@@ -280,6 +266,7 @@
       description: "Fuses acoustic and RF sensing to detect small unmanned aircraft well before visual acquisition, cueing a jamming or interceptor response across a 3 km detection radius.",
       specs: { class: "Detection System", range: "3 km Radius", sensor: "Acoustic + RF Fusion", power: "Grid / Battery", weight: "14 kg" },
       highlights: ["3 km Radius", "Acoustic + RF", "Early Warning"],
+      photos: ["assets/img/products/cuas-detector-1.png"],
       priceINR: 4210000,
       configurable: false,
     },
@@ -294,6 +281,7 @@
       description: "Continuously scans the RF spectrum from 70 MHz to 6 GHz for drone control and video signatures, providing a 5 km detection radius and cueing downstream jamming or interceptor assets.",
       specs: { class: "RF Spectrum Monitor", frequencyRange: "70 MHz – 6 GHz", range: "5 km Radius", power: "Grid / Vehicle", weight: "22 kg" },
       highlights: ["70 MHz – 6 GHz", "5 km Radius", "Spectrum Monitor"],
+      photos: ["assets/img/products/cuas-rf-detection-1.png"],
       priceINR: 6810000,
       configurable: false,
     },
@@ -379,4 +367,13 @@
   window.formatINR = formatINR;
   window.renderProductTile = renderProductTile;
   window.escapeHtml = escapeHtml;
+
+  // Clicking anywhere on a product tile (image, name, description) opens its
+  // detail page; clicks on the tile's own links/buttons keep their own behavior.
+  document.addEventListener("click", (e) => {
+    if (e.target.closest("a, button")) return;
+    const tile = e.target.closest(".product-tile[data-product-id]");
+    if (!tile) return;
+    window.location.href = "product-detail.html?id=" + encodeURIComponent(tile.dataset.productId);
+  });
 })();

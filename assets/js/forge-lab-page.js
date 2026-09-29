@@ -37,6 +37,15 @@
     return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">' + (FPV_STYLE_ICONS[key] || "") + "</svg>";
   }
 
+  let suppressAutoDefaults = false;
+
+  function applyFrameDefaults() {
+    if (suppressAutoDefaults) return;
+    const frame = F.byId(F.FRAMES, sel.frameId);
+    if (!frame) return;
+    Object.assign(sel, F.recommendedComponentsForFrame(frame, sel.platformId));
+  }
+
   const PLATFORM_OVERRIDE = {};
   const CATEGORY_DEFAULT_PLATFORM = { vtol: "vtol", fpv: "fpv", interceptor: "fpv", swarm: "fpv" };
 
@@ -123,6 +132,7 @@
         sel.frameId = null; // force re-default
         renderPlatformCards();
         renderFrame();
+        renderStaticLists();
         recompute();
       });
     });
@@ -143,6 +153,7 @@
     } else {
       const frames = platform ? platform.frameIds.map((id) => F.byId(F.FRAMES, id)) : F.FRAMES;
       sel.frameId = fillSelect(els.frame, frames, (f) => f.id, (f) => f.label, sel.frameId);
+      applyFrameDefaults();
     }
     els.payloadField.style.display = platform && platform.hasPayload ? "" : "none";
   }
@@ -156,6 +167,7 @@
         sel.fpvStyleId = card.dataset.style;
         renderFpvStylePicker();
         updateFpvFrameSelection();
+        renderStaticLists();
         recompute();
       });
     });
@@ -175,6 +187,7 @@
       onChange: (idx) => {
         sel.fpvSizeIn = sizes[idx];
         updateFpvFrameSelection();
+        renderStaticLists();
         recompute();
       },
     });
@@ -188,6 +201,7 @@
     document.getElementById("fpv-weight").textContent = "~" + frame.baseWeightG + " g";
     document.getElementById("fpv-motors").textContent = frame.motorCount;
     document.getElementById("fpv-prop").textContent = frame.maxPropIn + "″ or smaller";
+    applyFrameDefaults();
   }
 
   function renderStaticLists() {
@@ -463,6 +477,7 @@
       sel.frameId = null;
       renderPlatformCards();
       renderFrame();
+      renderStaticLists();
       recompute();
       document.getElementById("forge-platforms").scrollIntoView({ behavior: "smooth", block: "center" });
     });
@@ -488,6 +503,9 @@
     }
     if (!sel.platformId) sel.platformId = F.PLATFORMS[0].id;
 
+    // A restored saved build keeps its own exact part selections — don't
+    // let the frame-driven auto-defaults below overwrite them on load.
+    suppressAutoDefaults = restored;
     renderPlatformCards();
     renderFrame();
     renderStaticLists();
@@ -495,9 +513,17 @@
     recompute();
     wireActions();
     wireMissionProfile();
+    suppressAutoDefaults = false;
+
+    els.frame.addEventListener("change", () => {
+      sel.frameId = els.frame.value;
+      applyFrameDefaults();
+      renderStaticLists();
+      recompute();
+    });
 
     [
-      els.frame, els.motor, els.prop, els.esc, els.battery, els.fc, els.gps, els.video, els.camera, els.payload, els.receiver,
+      els.motor, els.prop, els.esc, els.battery, els.fc, els.gps, els.video, els.camera, els.payload, els.receiver,
       els.powerModule, els.bec, els.currentSensor, els.antenna, els.landingGear, els.buzzer, els.led, els.mount,
     ].forEach((el) => {
       el.addEventListener("change", recompute);

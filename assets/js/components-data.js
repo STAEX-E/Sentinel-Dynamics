@@ -21,15 +21,15 @@
     { id: "fw-1200", label: "FW-1200 Wing (1200mm)", style: "Fixed Wing", sizeIn: null, motorCount: 1, maxPropIn: 11, baseWeightG: 900, weightBudgetG: 1800, recommendedS: [4, 6], priceINR: 45000 },
     { id: "fw-1800", label: "FW-1800 Wing (1800mm)", style: "Fixed Wing", sizeIn: null, motorCount: 1, maxPropIn: 13, baseWeightG: 1600, weightBudgetG: 3200, recommendedS: [6, 8], priceINR: 78000 },
     { id: "vt-compact", label: "VT-Compact VTOL Frame", style: "VTOL", sizeIn: null, motorCount: 5, maxPropIn: 10, baseWeightG: 1400, weightBudgetG: 2600, recommendedS: [6, 8], priceINR: 95000 },
-    { id: "vt-extended", label: "VT-Extended VTOL Frame", style: "VTOL", sizeIn: null, motorCount: 5, maxPropIn: 13, baseWeightG: 2200, weightBudgetG: 4200, recommendedS: [8, 12], priceINR: 165000 },
+    { id: "vt-extended", label: "VT-Extended VTOL Frame", style: "VTOL", sizeIn: null, motorCount: 5, maxPropIn: 13, baseWeightG: 2200, weightBudgetG: 7400, recommendedS: [8, 12], priceINR: 165000 },
     { id: "cl-10", label: "CL-10 Cinelifter Frame", style: "Long X", sizeIn: 10, motorCount: 4, maxPropIn: 10, baseWeightG: 1100, weightBudgetG: 2400, recommendedS: [6, 8], priceINR: 52000 },
-    { id: "cl-13", label: "CL-13 Cinelifter Frame", style: "H-Frame", sizeIn: 13, motorCount: 6, maxPropIn: 13, baseWeightG: 1800, weightBudgetG: 3800, recommendedS: [8, 10], priceINR: 88000 },
-    { id: "hx-15", label: "HX-15 Hexacopter Frame", style: "Straight X", sizeIn: 15, motorCount: 6, maxPropIn: 15, baseWeightG: 1700, weightBudgetG: 3600, recommendedS: [8, 10], priceINR: 72000 },
-    { id: "hx-18", label: "HX-18 Hexacopter Frame", style: "Straight X", sizeIn: 18, motorCount: 6, maxPropIn: 18, baseWeightG: 2500, weightBudgetG: 5200, recommendedS: [10, 12], priceINR: 118000 },
-    { id: "oc-20", label: "OC-20 Octacopter Frame", style: "H-Frame", sizeIn: 20, motorCount: 8, maxPropIn: 20, baseWeightG: 3600, weightBudgetG: 7500, recommendedS: [10, 12], priceINR: 185000 },
-    { id: "oc-24", label: "OC-24 Octacopter Frame", style: "H-Frame", sizeIn: 24, motorCount: 8, maxPropIn: 24, baseWeightG: 5200, weightBudgetG: 11000, recommendedS: [12, 14], priceINR: 265000 },
-    { id: "int-6", label: "INT-6 Interceptor Frame", style: "Deadcat", sizeIn: 6, motorCount: 4, maxPropIn: 6, baseWeightG: 140, weightBudgetG: 520, recommendedS: [6, 6], priceINR: 22000 },
-    { id: "int-7", label: "INT-7 Interceptor Frame", style: "Deadcat", sizeIn: 7, motorCount: 4, maxPropIn: 7, baseWeightG: 190, weightBudgetG: 680, recommendedS: [6, 6], priceINR: 28000 },
+    { id: "cl-13", label: "CL-13 Cinelifter Frame", style: "H-Frame", sizeIn: 13, motorCount: 6, maxPropIn: 13, baseWeightG: 1800, weightBudgetG: 6200, recommendedS: [8, 10], priceINR: 88000 },
+    { id: "hx-15", label: "HX-15 Hexacopter Frame", style: "Straight X", sizeIn: 15, motorCount: 6, maxPropIn: 15, baseWeightG: 1700, weightBudgetG: 6200, recommendedS: [8, 10], priceINR: 72000 },
+    { id: "hx-18", label: "HX-18 Hexacopter Frame", style: "Straight X", sizeIn: 18, motorCount: 6, maxPropIn: 18, baseWeightG: 2500, weightBudgetG: 9000, recommendedS: [10, 12], priceINR: 118000 },
+    { id: "oc-20", label: "OC-20 Octacopter Frame", style: "H-Frame", sizeIn: 20, motorCount: 8, maxPropIn: 20, baseWeightG: 3600, weightBudgetG: 11200, recommendedS: [10, 12], priceINR: 185000 },
+    { id: "oc-24", label: "OC-24 Octacopter Frame", style: "H-Frame", sizeIn: 24, motorCount: 8, maxPropIn: 24, baseWeightG: 5200, weightBudgetG: 15700, recommendedS: [12, 14], priceINR: 265000 },
+    { id: "int-6", label: "INT-6 Interceptor Frame", style: "Deadcat", sizeIn: 6, motorCount: 4, maxPropIn: 6, baseWeightG: 140, weightBudgetG: 950, recommendedS: [6, 6], priceINR: 22000 },
+    { id: "int-7", label: "INT-7 Interceptor Frame", style: "Deadcat", sizeIn: 7, motorCount: 4, maxPropIn: 7, baseWeightG: 190, weightBudgetG: 1050, recommendedS: [6, 6], priceINR: 28000 },
   ];
 
   /* ---------------- FPV Frames: style + size component library ----------------
@@ -61,7 +61,12 @@
       motorCount: 4,
       maxPropIn: sizeIn,
       baseWeightG: weightG,
-      weightBudgetG: Math.round(weightG * 3.4),
+      // A real avionics + battery stack (FC, GPS, video, camera, receiver,
+      // power module, and a frame-matched battery) adds a fairly constant
+      // ~250-350g overhead on top of the airframe itself, which dwarfs a
+      // small frame's own weight — so the budget needs a much bigger
+      // multiplier than the frame's structural weight alone would suggest.
+      weightBudgetG: Math.round(weightG * 14),
       recommendedS: sizeIn <= 3.5 ? [2, 4] : sizeIn <= 5 ? [4, 6] : [6, 6],
       priceINR,
     };
@@ -71,14 +76,17 @@
   byId(PLATFORMS, "fpv").frameIds = FPV_FRAMES.map((f) => f.id);
 
   const MOTORS = [
-    { id: "m-1404", label: "M-1404 Micro", kv: 3800, recommendedS: [4, 6], maxCurrentA: 20, weightG: 11, priceINR: 850 },
-    { id: "m-2306", label: "M-2306 Mini", kv: 2400, recommendedS: [4, 6], maxCurrentA: 28, weightG: 32, priceINR: 1400 },
-    { id: "m-2807", label: "M-2807 Standard", kv: 1300, recommendedS: [6, 8], maxCurrentA: 35, weightG: 68, priceINR: 2600 },
-    { id: "m-3510", label: "M-3510 Heavy", kv: 700, recommendedS: [8, 12], maxCurrentA: 45, weightG: 145, priceINR: 5200 },
-    { id: "m-4014", label: "M-4014 X-Heavy", kv: 400, recommendedS: [10, 14], maxCurrentA: 60, weightG: 210, priceINR: 8400 },
+    { id: "m-1404", label: "M-1404 Micro", kv: 3800, recommendedS: [4, 6], typicalPropIn: 5, maxCurrentA: 20, weightG: 11, priceINR: 850 },
+    { id: "m-2306", label: "M-2306 Mini", kv: 2400, recommendedS: [4, 6], typicalPropIn: 6, maxCurrentA: 28, weightG: 32, priceINR: 1400 },
+    { id: "m-2807", label: "M-2807 Standard", kv: 1300, recommendedS: [6, 8], typicalPropIn: 9, maxCurrentA: 35, weightG: 68, priceINR: 2600 },
+    { id: "m-3510", label: "M-3510 Heavy", kv: 700, recommendedS: [8, 12], typicalPropIn: 13, maxCurrentA: 45, weightG: 145, priceINR: 5200 },
+    { id: "m-4014", label: "M-4014 X-Heavy", kv: 400, recommendedS: [10, 14], typicalPropIn: 20, maxCurrentA: 60, weightG: 210, priceINR: 8400 },
   ];
 
   const PROPELLERS = [
+    { id: "p-2x2", label: "2x2 (Micro Whoop)", sizeIn: 2, pitchIn: 2, weightG: 1, priceINR: 60 },
+    { id: "p-3x3", label: "3x3 (Micro Whoop)", sizeIn: 3, pitchIn: 3, weightG: 2, priceINR: 80 },
+    { id: "p-4x4", label: "4x4 (Micro Whoop)", sizeIn: 4, pitchIn: 4, weightG: 3, priceINR: 100 },
     { id: "p-5x4.3", label: "5x4.3", sizeIn: 5, pitchIn: 4.3, weightG: 5, priceINR: 150 },
     { id: "p-7x4", label: "7x4", sizeIn: 7, pitchIn: 4, weightG: 9, priceINR: 220 },
     { id: "p-10x4.5", label: "10x4.5", sizeIn: 10, pitchIn: 4.5, weightG: 18, priceINR: 380 },
@@ -191,6 +199,81 @@
 
   function byId(list, id) {
     return list.find((x) => x.id === id) || null;
+  }
+
+  function pickClosestInRange(list, getRange, target) {
+    let best = null;
+    let bestDist = Infinity;
+    list.forEach((item) => {
+      const [lo, hi] = getRange(item);
+      const dist = target < lo ? lo - target : target > hi ? target - hi : 0;
+      if (dist < bestDist) {
+        bestDist = dist;
+        best = item;
+      }
+    });
+    return best;
+  }
+
+  /**
+   * Given a chosen frame (and platform), pick a sensible default propulsion
+   * chain — battery, motor, ESC, propeller — sized to that frame, so the
+   * configurator's electronics track the selected frame instead of holding
+   * over whatever was previously selected.
+   */
+  function recommendedComponentsForFrame(frame, platformId) {
+    if (!frame) return {};
+    const sMid = Math.round((frame.recommendedS[0] + frame.recommendedS[1]) / 2);
+
+    const battery = pickClosestInRange(BATTERIES, (b) => [b.s, b.s], sMid);
+    const targetS = battery ? battery.s : sMid;
+
+    // Motor: favor one whose recommended battery range covers the chosen
+    // battery, then break ties (or near-ties) toward the motor whose typical
+    // prop size best matches this frame — so a 20-inch octo doesn't land on
+    // the same micro motor as a 2-inch whoop just because both tolerate the
+    // same voltage.
+    const motor = MOTORS.reduce((best, m) => {
+      const [lo, hi] = m.recommendedS;
+      const sDist = targetS < lo ? lo - targetS : targetS > hi ? targetS - hi : 0;
+      const propDist = Math.abs((m.typicalPropIn || 10) - frame.maxPropIn);
+      const score = sDist * 50 + propDist;
+      if (!best || score < best.score) return { part: m, score };
+      return best;
+    }, null);
+
+    const isFixedWing = platformId === "fixed-wing";
+    const propCandidates = PROPELLERS.filter((p) => /Fixed-Wing/.test(p.label) === isFixedWing);
+    const propSource = propCandidates.length ? propCandidates : PROPELLERS;
+    const propWithinBudget = propSource.filter((p) => p.sizeIn <= frame.maxPropIn);
+    const prop = propWithinBudget.length
+      ? propWithinBudget.reduce((best, p) => (p.sizeIn > best.sizeIn ? p : best))
+      : propSource.reduce((best, p) => (p.sizeIn < best.sizeIn ? p : best));
+
+    const motorPart = motor ? motor.part : null;
+    let esc = null;
+    if (battery && motorPart) {
+      const escCompatible = ESCS.filter((e) => e.compatibleS[0] <= battery.s && battery.s <= e.compatibleS[1]);
+      if (escCompatible.length) {
+        const sorted = escCompatible.slice().sort((a, b) => a.currentA - b.currentA);
+        esc =
+          sorted.find((e) => e.currentA >= motorPart.maxCurrentA * 1.15) ||
+          sorted.find((e) => e.currentA >= motorPart.maxCurrentA) ||
+          sorted[sorted.length - 1];
+      } else {
+        // No ESC's voltage rating covers this battery (e.g. a 2S/3S whoop
+        // build) — fall back to whichever ESC's range sits closest to it,
+        // rather than defaulting to the largest one in the catalog.
+        esc = pickClosestInRange(ESCS, (e) => e.compatibleS, battery.s);
+      }
+    }
+
+    return {
+      batteryId: battery ? battery.id : null,
+      motorId: motorPart ? motorPart.id : null,
+      propId: prop ? prop.id : null,
+      escId: esc ? esc.id : null,
+    };
   }
 
   function rangeStatus(value, range, softMargin) {
@@ -473,5 +556,6 @@
     STATUS_LABEL,
     byId,
     computeConfiguration,
+    recommendedComponentsForFrame,
   };
 })();
