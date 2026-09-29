@@ -22,7 +22,6 @@
     rf: '<path d="M2 12h3M6 7v10M10 4v16M14 7v10M18 4v16M22 12h-3"/>',
     lrf: '<path d="M4 20 18 6"/><circle cx="4" cy="20" r="2"/><path d="M13 6h6v6" stroke-dasharray="2 2"/><circle cx="19" cy="6" r="1.4" fill="currentColor" stroke="none"/>',
     backpack: '<rect x="6" y="7" width="12" height="14" rx="2.5"/><path d="M9 7V5a3 3 0 0 1 6 0v2"/><path d="M9 12h6M9 16h6"/><path d="M12 7V2"/><circle cx="12" cy="2" r="1.1" fill="currentColor" stroke="none"/>',
-    uwb: '<path d="M12 12 20 8"/><path d="M12 3a9 9 0 0 1 9 9"/><path d="M12 6a6 6 0 0 1 6 6" stroke-dasharray="1.5 2.5"/><circle cx="12" cy="12" r="1.4" fill="currentColor" stroke="none"/>',
   };
 
   function svg(iconKey) {
@@ -286,20 +285,6 @@
       configurable: false,
     },
     {
-      id: "cuas-uwb",
-      name: "Ultrawide Detector",
-      category: "counter-uas",
-      status: "active",
-      tag: "Counter-UAS · UWB Radar Detection",
-      icon: "uwb",
-      short: "An ultra-wideband radar detector that spots drones by their physical presence, not their radio emissions.",
-      description: "Uses ultra-wideband (UWB) radar to detect small unmanned aircraft by reflection rather than radio-frequency emission — effective against autonomous or RF-silent drones that standard RF detectors can miss, with wide-area coverage suited to perimeter defense.",
-      specs: { class: "UWB Radar Detector", frequencyRange: "3.1 – 10.6 GHz (UWB)", range: "4 km Radius", detectionMethod: "Radar Reflection (RF-Silent Capable)", power: "Grid / Vehicle", weight: "18 kg" },
-      highlights: ["UWB Radar", "4 km Radius", "RF-Silent Capable"],
-      priceINR: 5450000,
-      configurable: false,
-    },
-    {
       id: "cuas-backpack",
       name: "Backpack Jammer & Detector",
       category: "counter-uas",
@@ -310,6 +295,13 @@
       description: "Combines an RF/GNSS jammer and an RF detector into a single backpack-mounted unit for dismounted patrols and foot-mobile counter-drone teams, where a vehicle or tripod-mounted system isn't practical. Runs off a rechargeable battery pack for a full patrol duration.",
       specs: { class: "Backpack Jammer + Detector", frequencyBands: "2.4 / 5.8 GHz + GNSS", jamRange: "Up to 1.5 km", detectRange: "Up to 2 km", power: "Rechargeable Battery Pack", deployment: "Man-Portable Backpack", weight: "9 kg" },
       highlights: ["Man-Portable", "Jam + Detect", "Up to 2 km"],
+      coverImage: "assets/img/products/cuas-backpack-1.png",
+      photos: [
+        "assets/img/products/cuas-backpack-2.png",
+        "assets/img/products/cuas-backpack-3.png",
+        "assets/img/products/cuas-backpack-4.png",
+        "assets/img/products/cuas-backpack-5.png",
+      ],
       priceINR: 2450000,
       configurable: false,
     },

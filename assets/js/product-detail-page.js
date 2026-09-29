@@ -40,7 +40,7 @@
   const thumbsEl = document.getElementById("pd-gallery-thumbs");
 
   function showPhoto(src) {
-    visual.innerHTML = `<img src="${window.escapeHtml(src)}" alt="${window.escapeHtml(product.name)}" style="width:100%;height:100%;object-fit:cover;">`;
+    visual.innerHTML = `<img src="${window.escapeHtml(src)}" alt="${window.escapeHtml(product.name)}" style="width:100%;height:100%;object-fit:contain;padding:4%;">`;
   }
 
   if (product.photos && product.photos.length) {
