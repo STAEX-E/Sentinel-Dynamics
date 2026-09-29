@@ -70,6 +70,8 @@
       highlights: ["Spatian Aviation Collab", "1.5 m Wingspan", "120 km/h"],
       priceINR: 2810000,
       configurable: true,
+      coverImage: "assets/img/products/vtol-aniketra-1.png",
+      photos: ["assets/img/products/vtol-aniketra-1.png"],
     },
     {
       id: "vtol-sentry",
