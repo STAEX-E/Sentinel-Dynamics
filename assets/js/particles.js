@@ -2,8 +2,9 @@
    Sentinel Dynamics — Particle systems
    1) Ambient background field (all pages) — dots that just drift,
       never assembling into anything.
-   2) Opening sequence (home page only) — a few swarm drones fly
-      around a full-screen splash before the home page is revealed.
+   2) Opening sequence (home page only) — a few planes and
+      helicopters fly around a full-screen splash before the home
+      page is revealed.
    Pure canvas 2D, no dependencies.
    ============================================================ */
 
@@ -123,44 +124,74 @@
   }
 
   /* ---------------- Shared shape renderers ----------------
-     Used by the opening sequence's flying swarm drones. */
+     Used by the opening sequence's flying planes and helicopters. */
 
-  const DRONE_ARM_DEFS = {
-    quad: { count: 4, angleOffset: Math.PI / 4, armLen: 0.4, armW: 0.05, podR: 0.095, bodyR: 0.11 },
-    hexa: { count: 6, angleOffset: 0, armLen: 0.4, armW: 0.045, podR: 0.078, bodyR: 0.12 },
-    fpv: { count: 4, angleOffset: Math.PI / 4, armLen: 0.27, armW: 0.06, podR: 0.08, bodyR: 0.1 },
-    octo: { count: 8, angleOffset: Math.PI / 8, armLen: 0.4, armW: 0.04, podR: 0.062, bodyR: 0.13 },
-  };
+  // Stylized top-down fixed-wing silhouette (normalized -0.5..0.5), nose at -Y.
+  const PLANE_SHAPE = [
+    [0, -0.5], [0.045, -0.28], [0.05, -0.05],
+    [0.52, 0.1], [0.52, 0.17], [0.07, 0.08],
+    [0.09, 0.27], [0.24, 0.4], [0.24, 0.46],
+    [0.05, 0.37], [0.04, 0.5], [-0.04, 0.5],
+    [-0.05, 0.37], [-0.24, 0.46], [-0.24, 0.4],
+    [-0.09, 0.27], [-0.07, 0.08], [-0.52, 0.17],
+    [-0.52, 0.1], [-0.05, -0.05], [-0.045, -0.28],
+  ];
 
-  function drawDroneShape(octx, cx, cy, s, variant, fillStyle) {
-    const def = DRONE_ARM_DEFS[variant] || DRONE_ARM_DEFS.quad;
+  function drawPlaneShape(octx, cx, cy, s, fillStyle) {
     octx.fillStyle = fillStyle || "#fff";
-
     octx.beginPath();
-    octx.arc(cx, cy, def.bodyR * s, 0, Math.PI * 2);
+    octx.moveTo(cx + PLANE_SHAPE[0][0] * s, cy + PLANE_SHAPE[0][1] * s);
+    for (let i = 1; i < PLANE_SHAPE.length; i++) {
+      octx.lineTo(cx + PLANE_SHAPE[i][0] * s, cy + PLANE_SHAPE[i][1] * s);
+    }
+    octx.closePath();
+    octx.fill();
+  }
+
+  // Top-down helicopter: rotor cross + hub, fuselage, tail boom, tail rotor.
+  // Hub/cockpit faces -Y, tail extends toward +Y (same "front" convention as the plane).
+  function drawHelicopterShape(octx, cx, cy, s, fillStyle) {
+    octx.fillStyle = fillStyle || "#fff";
+    octx.save();
+    octx.translate(cx, cy);
+
+    octx.fillRect(-0.42 * s, -0.035 * s, 0.84 * s, 0.07 * s);
+    octx.save();
+    octx.rotate(Math.PI / 2);
+    octx.fillRect(-0.42 * s, -0.035 * s, 0.84 * s, 0.07 * s);
+    octx.restore();
+    octx.beginPath();
+    octx.arc(0, 0, 0.07 * s, 0, Math.PI * 2);
     octx.fill();
 
-    for (let i = 0; i < def.count; i++) {
-      const angle = def.angleOffset + (i / def.count) * Math.PI * 2;
-      octx.save();
-      octx.translate(cx, cy);
-      octx.rotate(angle);
-      octx.fillRect(0, (-def.armW * s) / 2, def.armLen * s, def.armW * s);
-      octx.restore();
+    octx.beginPath();
+    octx.ellipse(0, 0.16 * s, 0.09 * s, 0.22 * s, 0, 0, Math.PI * 2);
+    octx.fill();
 
-      const ex = cx + Math.cos(angle) * def.armLen * s;
-      const ey = cy + Math.sin(angle) * def.armLen * s;
-      octx.beginPath();
-      octx.arc(ex, ey, def.podR * s, 0, Math.PI * 2);
-      octx.fill();
-    }
+    octx.fillRect(-0.02 * s, 0.16 * s, 0.04 * s, 0.34 * s);
+
+    octx.save();
+    octx.translate(0, 0.5 * s);
+    octx.fillRect(-0.09 * s, -0.015 * s, 0.18 * s, 0.03 * s);
+    octx.beginPath();
+    octx.arc(0, 0, 0.025 * s, 0, Math.PI * 2);
+    octx.fill();
+    octx.restore();
+
+    octx.restore();
+  }
+
+  function drawFlyerShape(octx, cx, cy, s, shapeKey, fillStyle) {
+    if (shapeKey === "heli") drawHelicopterShape(octx, cx, cy, s, fillStyle);
+    else drawPlaneShape(octx, cx, cy, s, fillStyle);
   }
 
   /* ---------------- Opening sequence ----------------
-     A handful of swarm drones fly around a full-screen splash for a
-     couple of seconds, then fade out to reveal the actual home page.
-     The home page itself has no special hero particles — just the
-     ambient background field drifting behind it like every other page. */
+     A handful of planes and helicopters fly around a full-screen
+     splash for a couple of seconds, then fade out to reveal the
+     actual home page. The home page itself has no special hero
+     particles — just the ambient background field drifting behind
+     it like every other page. */
   function initIntroSequence() {
     const overlay = document.getElementById("intro-overlay");
     const canvas = document.getElementById("intro-canvas");
@@ -182,22 +213,22 @@
     resize();
     window.addEventListener("resize", resize);
 
-    const DRONE_SHAPES = ["quad", "hexa", "fpv", "octo"];
+    const FLYER_SHAPES = ["plane", "heli"];
     const DURATION = 2600;
     const FADE = 700;
     let start = null;
     let done = false;
 
-    const drones = Array.from({ length: 6 }, () => {
+    const flyers = Array.from({ length: 6 }, () => {
       const angle = Math.random() * Math.PI * 2;
       const speed = (0.32 + Math.random() * 0.3) * DPR;
       return {
-        shape: DRONE_SHAPES[Math.floor(Math.random() * DRONE_SHAPES.length)],
+        shape: FLYER_SHAPES[Math.floor(Math.random() * FLYER_SHAPES.length)],
         x: Math.random() * w,
         y: Math.random() * h,
         vx: Math.cos(angle) * speed,
         vy: Math.sin(angle) * speed,
-        size: (26 + Math.random() * 20) * DPR,
+        size: (28 + Math.random() * 22) * DPR,
         wobble: Math.random() * Math.PI * 2,
         wobbleSpeed: 0.0018 + Math.random() * 0.0018,
         color: Math.random() > 0.7 ? "rgba(255,122,26,0.92)" : "rgba(244,197,24,0.92)",
@@ -217,7 +248,7 @@
       const elapsed = t - start;
       ctx.clearRect(0, 0, w, h);
 
-      for (const d of drones) {
+      for (const d of flyers) {
         d.vx += Math.sin(t * d.wobbleSpeed + d.wobble) * 0.012 * DPR;
         d.vy += Math.cos(t * d.wobbleSpeed + d.wobble) * 0.012 * DPR;
         d.x += d.vx;
@@ -227,11 +258,13 @@
         if (d.y < -50 * DPR) d.y = h + 50 * DPR;
         if (d.y > h + 50 * DPR) d.y = -50 * DPR;
 
-        const heading = Math.atan2(d.vy, d.vx) + Math.PI / 2;
+        // Nose (both shapes) points toward -Y before rotation, so align
+        // it to the velocity vector so each flyer banks toward its heading.
+        const heading = Math.atan2(d.vx, -d.vy);
         ctx.save();
         ctx.translate(d.x, d.y);
         ctx.rotate(heading);
-        drawDroneShape(ctx, 0, 0, d.size, d.shape, d.color);
+        drawFlyerShape(ctx, 0, 0, d.size, d.shape, d.color);
         ctx.restore();
       }
 

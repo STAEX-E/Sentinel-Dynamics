@@ -48,8 +48,6 @@
     { id: 11, category: "interceptor", title: "Interceptor 5\" — Enclosed Body", image: "assets/img/products/interceptor-5-1.webp" },
     { id: 12, category: "counter-uas", title: "Counter-UAS Jammer — Field Deployment" },
     { id: 13, category: "counter-uas", title: "RF Detection System — Mobile Mount" },
-    { id: 14, category: "counter-uas", title: "Laser Range Finder — Gimbal-Mounted EO/IR Variant", image: "assets/img/products/lrf-1.png" },
-    { id: 21, category: "counter-uas", title: "Laser Range Finder — Ruggedized Field Variant", image: "assets/img/products/lrf-2.png" },
     { id: 15, category: "development", title: "Airframe Design Review" },
     { id: 16, category: "development", title: "Avionics Bench Integration" },
     { id: 17, category: "flight-ops", title: "Flight-Control Validation" },
