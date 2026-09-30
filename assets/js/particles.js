@@ -217,32 +217,65 @@
 
     const GRID = buildGlobeGrid();
 
-    // A handful of real cities standing in for "global reach" — HQ first.
+    // A dense set of real-world cities marked as glowing dots on the
+    // globe, standing in for "global reach" — HQ first.
     const CITIES = [
-      sphereFromLatLon(17.4, 78.5), // Hyderabad
-      sphereFromLatLon(51.5, -0.1), // London
-      sphereFromLatLon(40.7, -74.0), // New York
-      sphereFromLatLon(35.7, 139.7), // Tokyo
-      sphereFromLatLon(25.2, 55.3), // Dubai
-      sphereFromLatLon(-33.9, 151.2), // Sydney
-      sphereFromLatLon(55.75, 37.6), // Moscow
-      sphereFromLatLon(28.6, 77.2), // Delhi
-      sphereFromLatLon(24.45, 54.4), // Abu Dhabi
-      sphereFromLatLon(41.85, -87.65), // Chicago
-      sphereFromLatLon(19.4, -99.1), // Mexico City
+      sphereFromLatLon(17.4, 78.5), // 0 Hyderabad
+      sphereFromLatLon(51.5, -0.1), // 1 London
+      sphereFromLatLon(40.7, -74.0), // 2 New York
+      sphereFromLatLon(35.7, 139.7), // 3 Tokyo
+      sphereFromLatLon(25.2, 55.3), // 4 Dubai
+      sphereFromLatLon(-33.9, 151.2), // 5 Sydney
+      sphereFromLatLon(55.75, 37.6), // 6 Moscow
+      sphereFromLatLon(28.6, 77.2), // 7 Delhi
+      sphereFromLatLon(24.45, 54.4), // 8 Abu Dhabi
+      sphereFromLatLon(41.85, -87.65), // 9 Chicago
+      sphereFromLatLon(19.4, -99.1), // 10 Mexico City
+      sphereFromLatLon(48.85, 2.35), // 11 Paris
+      sphereFromLatLon(52.52, 13.4), // 12 Berlin
+      sphereFromLatLon(41.9, 12.5), // 13 Rome
+      sphereFromLatLon(40.4, -3.7), // 14 Madrid
+      sphereFromLatLon(41.0, 28.9), // 15 Istanbul
+      sphereFromLatLon(30.0, 31.2), // 16 Cairo
+      sphereFromLatLon(24.7, 46.7), // 17 Riyadh
+      sphereFromLatLon(35.7, 51.4), // 18 Tehran
+      sphereFromLatLon(24.86, 67.0), // 19 Karachi
+      sphereFromLatLon(19.07, 72.87), // 20 Mumbai
+      sphereFromLatLon(12.97, 77.59), // 21 Bangalore
+      sphereFromLatLon(13.08, 80.27), // 22 Chennai
+      sphereFromLatLon(22.57, 88.36), // 23 Kolkata
+      sphereFromLatLon(1.35, 103.82), // 24 Singapore
+      sphereFromLatLon(13.75, 100.5), // 25 Bangkok
+      sphereFromLatLon(-6.2, 106.85), // 26 Jakarta
+      sphereFromLatLon(14.6, 120.98), // 27 Manila
+      sphereFromLatLon(39.9, 116.4), // 28 Beijing
+      sphereFromLatLon(31.2, 121.47), // 29 Shanghai
+      sphereFromLatLon(37.57, 126.98), // 30 Seoul
+      sphereFromLatLon(22.32, 114.17), // 31 Hong Kong
+      sphereFromLatLon(-26.2, 28.05), // 32 Johannesburg
+      sphereFromLatLon(-1.29, 36.82), // 33 Nairobi
+      sphereFromLatLon(6.52, 3.38), // 34 Lagos
+      sphereFromLatLon(-23.55, -46.63), // 35 São Paulo
+      sphereFromLatLon(-34.6, -58.38), // 36 Buenos Aires
+      sphereFromLatLon(43.65, -79.38), // 37 Toronto
+      sphereFromLatLon(34.05, -118.24), // 38 Los Angeles
+      sphereFromLatLon(37.77, -122.42), // 39 San Francisco
+      sphereFromLatLon(38.9, -77.04), // 40 Washington, D.C.
     ];
     const ROUTES = [
-      [0, 1], [2, 3], [4, 5], [7, 6], [8, 9], [9, 10], [1, 7],
+      [0, 1], [2, 3], [4, 5], [7, 6], [8, 9], [9, 10],
+      [1, 7], [11, 16], [24, 28], [38, 30], [35, 37], [20, 31],
     ];
 
     const CRUISE_ROT_SPEED = 0.00055; // rad/ms during the cruising phase
-    const PHASE1_END = 4600; // globe cruising + flights
+    const PHASE1_END = 4600; // globe cruising + connections forming
     const PHASE2_END = PHASE1_END + 900; // rapid spin + zoom into camera
     const LOGO_HOLD_END = PHASE2_END + 1700; // hold the bold reveal
     const FADE = 700;
 
-    const FLIGHT_LAUNCH = [200, 900, 1700, 2500, 3300];
-    const FLIGHT_DURATION = 2000;
+    const ROUTE_LAUNCH_START = 150;
+    const ROUTE_LAUNCH_STEP = 280;
+    const ROUTE_DRAW_DURATION = 1200;
 
     let start = null;
     let done = false;
@@ -279,68 +312,62 @@
       }
     }
 
-    function drawFlights(rotY, elapsed, zoom) {
+    // Every city gets a small glowing marker, faded toward the far side
+    // of the sphere just like the grid — there are a lot of these, so
+    // keep each draw call cheap (two filled circles, no shadow blur).
+    function drawCityDots(rotY, zoom, alpha) {
+      for (const city of CITIES) {
+        const p = projectPoint(city, rotY, R, cx, cy, zoom);
+        const depthAlpha = Math.max(0, (p.z + 0.55) / 1.15);
+        if (depthAlpha <= 0.02) continue;
+        const a = depthAlpha * alpha;
+        ctx.beginPath();
+        ctx.fillStyle = `rgba(244,197,24,${0.18 * a})`;
+        ctx.arc(p.x, p.y, 3.2 * DPR, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.fillStyle = `rgba(255,226,150,${0.85 * a})`;
+        ctx.arc(p.x, p.y, 1.3 * DPR, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+
+    // Routes connect two cities with a dotted great-circle line that
+    // draws itself in over ROUTE_DRAW_DURATION, then stays put — no
+    // moving aircraft, just a growing network of dotted connections.
+    function drawRoutes(rotY, elapsed, zoom, alpha) {
+      ctx.lineWidth = 1.4 * DPR;
+      ctx.setLineDash([3.5 * DPR, 4.5 * DPR]);
       ROUTES.forEach((route, idx) => {
-        const launchAt = FLIGHT_LAUNCH[idx % FLIGHT_LAUNCH.length];
-        const t = (elapsed - launchAt) / FLIGHT_DURATION;
-        if (t < 0 || t > 1.08) return;
+        const launchAt = ROUTE_LAUNCH_START + idx * ROUTE_LAUNCH_STEP;
+        const t = (elapsed - launchAt) / ROUTE_DRAW_DURATION;
+        if (t < 0) return;
         const tc = Math.min(1, t);
         const a = CITIES[route[0]];
         const b = CITIES[route[1]];
 
-        // Fading trail: sample the arc behind the current position.
-        const TRAIL_STEPS = 26;
-        for (let i = 0; i < TRAIL_STEPS; i++) {
-          const ft = tc * (i / TRAIL_STEPS);
-          if (ft > tc) continue;
-          const elevate = 1 + 0.035 * Math.sin(ft * Math.PI);
-          const pt = slerp(a, b, ft).map((v) => v * elevate);
+        const STEPS = 48;
+        const n = Math.max(1, Math.round(STEPS * tc));
+        let avgZ = 0;
+        let sampleCount = 0;
+        ctx.beginPath();
+        for (let i = 0; i <= n; i++) {
+          const ft = (i / STEPS) * tc;
+          const elevate = 1 + 0.03 * Math.sin((i / STEPS) * Math.PI);
+          const pt = slerp(a, b, Math.min(1, ft)).map((v) => v * elevate);
           const proj = projectPoint(pt, rotY, R, cx, cy, zoom);
-          if (proj.z < -0.5) continue;
-          const trailAlpha = (i / TRAIL_STEPS) * 0.55 * Math.max(0, 1 - t * 0.15);
-          ctx.beginPath();
-          ctx.fillStyle = `rgba(244,197,24,${trailAlpha})`;
-          ctx.arc(proj.x, proj.y, 1.1 * DPR, 0, Math.PI * 2);
-          ctx.fill();
+          avgZ += proj.z;
+          sampleCount++;
+          if (i === 0) ctx.moveTo(proj.x, proj.y);
+          else ctx.lineTo(proj.x, proj.y);
         }
-
-        // The aircraft itself: a small sleek plane silhouette at the
-        // current point, nose pointed along its direction of travel.
-        const elevate = 1 + 0.035 * Math.sin(tc * Math.PI);
-        const here = slerp(a, b, tc).map((v) => v * elevate);
-        const ahead = slerp(a, b, Math.min(1, tc + 0.02)).map((v) => v * elevate);
-        const p0 = projectPoint(here, rotY, R, cx, cy, zoom);
-        const p1 = projectPoint(ahead, rotY, R, cx, cy, zoom);
-        if (p0.z < -0.4) return;
-        const heading = Math.atan2(p1.y - p0.y, p1.x - p0.x);
-        const glow = Math.max(0, (p0.z + 0.4) / 1.4);
-        ctx.save();
-        ctx.translate(p0.x, p0.y);
-        ctx.rotate(heading);
-        drawPlaneIcon(ctx, 8.5 * DPR, `rgba(255,214,120,${0.6 + 0.4 * glow})`);
-        ctx.restore();
+        avgZ /= sampleCount || 1;
+        const depthAlpha = Math.max(0, (avgZ + 0.55) / 1.15);
+        if (depthAlpha <= 0.02) return;
+        ctx.strokeStyle = `rgba(255,214,120,${0.65 * depthAlpha * alpha})`;
+        ctx.stroke();
       });
-    }
-
-    // A small top-down airplane silhouette, nose pointing along +X
-    // (the caller rotates the canvas to the heading before calling this).
-    // s is the nose-to-tail half-length.
-    const PLANE_ICON_SHAPE = [
-      [1.0, 0], [0.56, 0.09], [0.1, 0.1], [-0.2, 1.04], [-0.34, 1.04],
-      [-0.16, 0.14], [-0.54, 0.18], [-0.8, 0.48], [-0.92, 0.48],
-      [-0.74, 0.1], [-1.0, 0.08], [-1.0, -0.08], [-0.74, -0.1],
-      [-0.92, -0.48], [-0.8, -0.48], [-0.54, -0.18], [-0.16, -0.14],
-      [-0.34, -1.04], [-0.2, -1.04], [0.1, -0.1], [0.56, -0.09],
-    ];
-    function drawPlaneIcon(octx, s, fillStyle) {
-      octx.fillStyle = fillStyle;
-      octx.beginPath();
-      octx.moveTo(PLANE_ICON_SHAPE[0][0] * s, PLANE_ICON_SHAPE[0][1] * s);
-      for (let i = 1; i < PLANE_ICON_SHAPE.length; i++) {
-        octx.lineTo(PLANE_ICON_SHAPE[i][0] * s, PLANE_ICON_SHAPE[i][1] * s);
-      }
-      octx.closePath();
-      octx.fill();
+      ctx.setLineDash([]);
     }
 
     function easeInExpo(x) {
@@ -355,7 +382,8 @@
       if (elapsed <= PHASE1_END) {
         const rotY = elapsed * CRUISE_ROT_SPEED;
         drawGlobe(rotY, 1, 1);
-        drawFlights(rotY, elapsed, 1);
+        drawCityDots(rotY, 1, 1);
+        drawRoutes(rotY, elapsed, 1, 1);
       } else if (elapsed <= PHASE2_END) {
         // Rapid spin-up + rush toward camera, fading out as it overscales.
         const p = (elapsed - PHASE1_END) / (PHASE2_END - PHASE1_END);
@@ -364,6 +392,8 @@
         const zoom = 1 + eased * 7;
         const alpha = Math.max(0, 1 - Math.pow(p, 1.6) * 1.15);
         drawGlobe(rotY, alpha, zoom);
+        drawCityDots(rotY, zoom, alpha);
+        drawRoutes(rotY, PHASE1_END, zoom, alpha);
         // A brief bright flash right at the climax sells the "burst
         // through into the logo" feeling.
         if (p > 0.72) {
