@@ -265,16 +265,19 @@
     const ROUTES = [
       [0, 1], [2, 3], [4, 5], [7, 6], [8, 9], [9, 10],
       [1, 7], [11, 16], [24, 28], [38, 30], [35, 37], [20, 31],
+      [0, 20], [0, 22], [7, 19], [17, 18], [15, 13], [12, 14],
+      [6, 18], [25, 26], [26, 27], [29, 31], [28, 3], [33, 32],
+      [34, 32], [39, 38], [40, 37], [4, 17],
     ];
 
-    const CRUISE_ROT_SPEED = 0.00055; // rad/ms during the cruising phase
-    const PHASE1_END = 4600; // globe cruising + connections forming
+    const CRUISE_ROT_SPEED = 0.00085; // rad/ms during the cruising phase
+    const PHASE1_END = 5000; // globe cruising + connections forming
     const PHASE2_END = PHASE1_END + 900; // rapid spin + zoom into camera
     const LOGO_HOLD_END = PHASE2_END + 1700; // hold the bold reveal
     const FADE = 700;
 
     const ROUTE_LAUNCH_START = 150;
-    const ROUTE_LAUNCH_STEP = 280;
+    const ROUTE_LAUNCH_STEP = 135;
     const ROUTE_DRAW_DURATION = 1200;
 
     let start = null;

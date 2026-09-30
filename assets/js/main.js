@@ -20,6 +20,23 @@
     window.addEventListener("scroll", onScroll, { passive: true });
     onScroll();
 
+    // Mobile nav: hamburger toggles the full-screen link panel
+    const burger = document.getElementById("nav-burger");
+    const navLinks = document.querySelector(".nav__links");
+    if (burger && navLinks) {
+      const closeMenu = () => {
+        navLinks.classList.remove("is-open");
+        burger.classList.remove("is-active");
+        burger.setAttribute("aria-expanded", "false");
+      };
+      burger.addEventListener("click", () => {
+        const isOpen = navLinks.classList.toggle("is-open");
+        burger.classList.toggle("is-active", isOpen);
+        burger.setAttribute("aria-expanded", String(isOpen));
+      });
+      navLinks.querySelectorAll("a").forEach((a) => a.addEventListener("click", closeMenu));
+    }
+
     // Log Out — only shown once a defense-personnel attestation has been
     // completed (see verify.js); clears it and returns to the homepage.
     const logoutBtn = document.getElementById("nav-logout-btn");

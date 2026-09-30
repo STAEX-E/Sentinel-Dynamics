@@ -101,7 +101,7 @@ img, svg { display: block; max-width: 100%; }
   transition: opacity .7s ease;
   /* Pure-CSS failsafe: even if the animation JS never runs, this
      overlay stops blocking the page on its own after a few seconds. */
-  animation: introOverlayFailsafe 0s linear 9.5s forwards;
+  animation: introOverlayFailsafe 0s linear 10.2s forwards;
 }
 #intro-overlay.is-hidden {
   opacity: 0;
@@ -292,6 +292,17 @@ img, svg { display: block; max-width: 100%; }
 .nav__icon-btn svg { width: 17px; height: 17px; }
 .nav__icon-btn:hover { color: var(--c-yellow); background: var(--c-panel-2); }
 .nav__icon-btn--labeled { width: auto; padding: 0 .7rem 0 .55rem; gap: .4rem; }
+
+#nav-logout-btn {
+  background: #000;
+  border: 1px solid var(--c-yellow-dim);
+  color: var(--c-gray-light);
+}
+#nav-logout-btn:hover {
+  background: #000;
+  border-color: var(--c-yellow);
+  color: var(--c-yellow);
+}
 .nav__icon-btn__label {
   font-size: .72rem;
   font-weight: 700;
@@ -386,6 +397,33 @@ img, svg { display: block; max-width: 100%; }
   visibility: visible;
   transform: translate(-50%, 0);
 }
+
+.nav__burger {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.nav__burger span {
+  display: block;
+  width: 19px;
+  height: 2px;
+  background: var(--c-gray-light);
+  border-radius: 2px;
+  transition: transform .25s var(--ease-out), opacity .2s var(--ease-out), background .2s var(--ease-out);
+}
+.nav__burger.is-active span { background: var(--c-yellow); }
+.nav__burger.is-active span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+.nav__burger.is-active span:nth-child(2) { opacity: 0; }
+.nav__burger.is-active span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
 
 /* ============================================================
    Layout helpers
@@ -2438,14 +2476,54 @@ body.id-verify-locked > *:not(#id-verify-overlay) {
   .nav__brand .brand-lockup { font-size: .88rem; }
   .nav__brand .brand-word--sub { display: none; }
   .nav__right { gap: .5rem; }
+  .nav__burger { display: flex; }
   .nav__links {
-    gap: .85rem;
-    font-size: .62rem;
-    overflow-x: auto;
-    max-width: 34vw;
-    -ms-overflow-style: none;
-    scrollbar-width: none;
+    display: none;
+    position: fixed;
+    /* .nav has a non-none backdrop-filter, which makes it the containing
+       block for fixed descendants — so this is anchored to the nav bar's
+       own box (top: 100%) with an explicit viewport-relative height,
+       rather than "inset: 0", which would resolve against that box too. */
+    top: 100%;
+    left: 0;
+    right: 0;
+    height: 100vh;
+    z-index: 1;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    max-width: none;
+    font-size: 1rem;
+    letter-spacing: .04em;
+    background: var(--c-bg);
+    padding: 1.5rem 1.5rem 2rem;
+    overflow-y: auto;
   }
+  .nav__links.is-open { display: flex; }
+  .nav__links a {
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--c-border);
+  }
+  .nav__dropdown {
+    position: static;
+    display: block;
+  }
+  .nav__dropdown-menu {
+    position: static;
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    background: none;
+    border: none;
+    padding: 0 0 0 1.1rem;
+    margin-top: .4rem;
+    min-width: 0;
+  }
+  .nav__dropdown-menu a {
+    font-size: .92rem;
+    padding: .85rem 0;
+  }
+  .nav__dropdown-menu a[href="about.html"] { display: none; }
   .nav__utility {
     padding-left: .5rem;
     gap: .1rem;
@@ -2454,7 +2532,6 @@ body.id-verify-locked > *:not(#id-verify-overlay) {
   .nav__icon-btn svg { width: 15px; height: 15px; }
   .nav__icon-btn--labeled { width: auto; }
   .nav__icon-btn__label { display: none; }
-  .nav__links::-webkit-scrollbar { display: none; }
   .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
   .cta-band { flex-direction: column; align-items: flex-start; }
   footer { flex-direction: column; align-items: flex-start; }
