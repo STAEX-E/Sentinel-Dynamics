@@ -64,27 +64,11 @@
     return item.image ? `<img src="${window.escapeHtml(item.image)}" alt="${window.escapeHtml(item.title)}">` : svg(item.category);
   }
 
-  const filtersEl = document.getElementById("gallery-filters");
-  const categories = ["all", "uav", "vtol", "fpv", "interceptor", "counter-uas", "development", "flight-ops", "exhibition"];
-  let active = "all";
   let visibleItems = ITEMS;
   let lightboxIndex = 0;
 
-  function renderFilters() {
-    filtersEl.innerHTML = categories
-      .map((c) => `<button type="button" class="forge-pill${c === active ? " is-selected" : ""}" data-cat="${c}">${c === "all" ? "All" : CATEGORY_LABEL[c]}</button>`)
-      .join("");
-    filtersEl.querySelectorAll(".forge-pill").forEach((btn) => {
-      btn.addEventListener("click", () => {
-        active = btn.dataset.cat;
-        renderFilters();
-        renderGrid();
-      });
-    });
-  }
-
   function renderGrid() {
-    visibleItems = active === "all" ? ITEMS : ITEMS.filter((i) => i.category === active);
+    visibleItems = ITEMS;
     grid.innerHTML = visibleItems
       .map(
         (item, i) => `<div class="gallery-tile reveal" data-index="${i}">
@@ -138,6 +122,5 @@
     if (e.key === "ArrowRight") step(1);
   });
 
-  renderFilters();
   renderGrid();
 })();

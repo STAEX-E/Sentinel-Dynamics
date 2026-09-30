@@ -322,7 +322,11 @@
       description: "Continuously scans the RF spectrum from 70 MHz to 6 GHz for drone control and video signatures, providing a 5 km detection radius and cueing downstream jamming or interceptor assets.",
       specs: { class: "RF Spectrum Monitor", frequencyRange: "70 MHz – 6 GHz", range: "5 km Radius", power: "Grid / Vehicle", weight: "22 kg" },
       highlights: ["70 MHz – 6 GHz", "5 km Radius", "Spectrum Monitor"],
-      photos: ["assets/img/products/cuas-rf-detection-1.png"],
+      photos: [
+        "assets/img/products/cuas-rf-detection-1.png",
+        "assets/img/products/cuas-rf-detection-2.jpg",
+        "assets/img/products/cuas-rf-detection-3.jpg",
+      ],
       priceINR: 510000,
       configurable: false,
     },

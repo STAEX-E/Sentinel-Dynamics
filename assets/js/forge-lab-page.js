@@ -44,6 +44,7 @@
     const frame = F.byId(F.FRAMES, sel.frameId);
     if (!frame) return;
     Object.assign(sel, F.recommendedComponentsForFrame(frame, sel.platformId));
+    renderProtocolPills();
   }
 
   const PLATFORM_OVERRIDE = {};

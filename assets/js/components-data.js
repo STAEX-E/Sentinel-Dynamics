@@ -20,7 +20,7 @@
   const FRAMES = [
     { id: "fw-1200", label: "FW-1200 Wing (1200mm)", style: "Fixed Wing", sizeIn: null, motorCount: 1, maxPropIn: 11, baseWeightG: 900, weightBudgetG: 1800, recommendedS: [4, 6], priceINR: 45000 },
     { id: "fw-1800", label: "FW-1800 Wing (1800mm)", style: "Fixed Wing", sizeIn: null, motorCount: 1, maxPropIn: 13, baseWeightG: 1600, weightBudgetG: 3200, recommendedS: [6, 8], priceINR: 78000 },
-    { id: "vt-compact", label: "VT-Compact VTOL Frame", style: "VTOL", sizeIn: null, motorCount: 5, maxPropIn: 10, baseWeightG: 1400, weightBudgetG: 2600, recommendedS: [6, 8], priceINR: 95000 },
+    { id: "vt-compact", label: "VT-Compact VTOL Frame", style: "VTOL", sizeIn: null, motorCount: 5, maxPropIn: 10, baseWeightG: 1400, weightBudgetG: 2750, recommendedS: [6, 8], priceINR: 95000 },
     { id: "vt-extended", label: "VT-Extended VTOL Frame", style: "VTOL", sizeIn: null, motorCount: 5, maxPropIn: 13, baseWeightG: 2200, weightBudgetG: 7400, recommendedS: [8, 12], priceINR: 165000 },
     { id: "cl-10", label: "CL-10 Cinelifter Frame", style: "Long X", sizeIn: 10, motorCount: 4, maxPropIn: 10, baseWeightG: 1100, weightBudgetG: 2400, recommendedS: [6, 8], priceINR: 52000 },
     { id: "cl-13", label: "CL-13 Cinelifter Frame", style: "H-Frame", sizeIn: 13, motorCount: 6, maxPropIn: 13, baseWeightG: 1800, weightBudgetG: 6200, recommendedS: [8, 10], priceINR: 88000 },
@@ -76,8 +76,12 @@
   byId(PLATFORMS, "fpv").frameIds = FPV_FRAMES.map((f) => f.id);
 
   const MOTORS = [
-    { id: "m-1404", label: "M-1404 Micro", kv: 3800, recommendedS: [4, 6], typicalPropIn: 5, maxCurrentA: 20, weightG: 11, priceINR: 850 },
+    { id: "m-1404", label: "M-1404 Micro", kv: 3800, recommendedS: [2, 4], typicalPropIn: 5, maxCurrentA: 20, weightG: 11, priceINR: 850 },
     { id: "m-2306", label: "M-2306 Mini", kv: 2400, recommendedS: [4, 6], typicalPropIn: 6, maxCurrentA: 28, weightG: 32, priceINR: 1400 },
+    { id: "m-2207-2100", label: "M-2207 Racing", kv: 2100, recommendedS: [4, 6], typicalPropIn: 6, maxCurrentA: 30, weightG: 30, priceINR: 1500 },
+    { id: "m-2306-1900", label: "M-2306 Freestyle", kv: 1900, recommendedS: [4, 6], typicalPropIn: 7, maxCurrentA: 32, weightG: 34, priceINR: 1600 },
+    { id: "m-2507-1700", label: "M-2507 Long Range", kv: 1700, recommendedS: [4, 6], typicalPropIn: 7, maxCurrentA: 33, weightG: 40, priceINR: 1800 },
+    { id: "m-2606-1500", label: "M-2606 Long Range", kv: 1500, recommendedS: [6, 8], typicalPropIn: 8, maxCurrentA: 34, weightG: 50, priceINR: 2100 },
     { id: "m-2807", label: "M-2807 Standard", kv: 1300, recommendedS: [6, 8], typicalPropIn: 9, maxCurrentA: 35, weightG: 68, priceINR: 2600 },
     { id: "m-3510", label: "M-3510 Heavy", kv: 700, recommendedS: [8, 12], typicalPropIn: 13, maxCurrentA: 45, weightG: 145, priceINR: 5200 },
     { id: "m-4014", label: "M-4014 X-Heavy", kv: 400, recommendedS: [10, 14], typicalPropIn: 20, maxCurrentA: 60, weightG: 210, priceINR: 8400 },
@@ -99,8 +103,9 @@
   ];
 
   const ESCS = [
-    { id: "esc-30a", label: "ESC-30A", currentA: 30, compatibleS: [4, 6], weightG: 6, priceINR: 900 },
-    { id: "esc-45a", label: "ESC-45A", currentA: 45, compatibleS: [6, 8], weightG: 12, priceINR: 1600 },
+    { id: "esc-25a", label: "ESC-25A", currentA: 25, compatibleS: [2, 4], weightG: 4, priceINR: 600 },
+    { id: "esc-30a", label: "ESC-30A", currentA: 30, compatibleS: [4, 7], weightG: 6, priceINR: 900 },
+    { id: "esc-45a", label: "ESC-45A", currentA: 45, compatibleS: [5, 8], weightG: 12, priceINR: 1600 },
     { id: "esc-60a", label: "ESC-60A", currentA: 60, compatibleS: [6, 10], weightG: 22, priceINR: 2400 },
     { id: "esc-80a", label: "ESC-80A", currentA: 80, compatibleS: [8, 12], weightG: 38, priceINR: 3800 },
     { id: "esc-120a", label: "ESC-120A", currentA: 120, compatibleS: [10, 14], weightG: 65, priceINR: 6200 },
@@ -216,10 +221,29 @@
   }
 
   /**
-   * Given a chosen frame (and platform), pick a sensible default propulsion
-   * chain — battery, motor, ESC, propeller — sized to that frame, so the
-   * configurator's electronics track the selected frame instead of holding
-   * over whatever was previously selected.
+   * Per-platform defaults for everything that isn't purely propulsion:
+   * comms protocol, camera, landing gear, LEDs, battery mounting and
+   * safety buzzer. "auto" video tiers are resolved against the specific
+   * frame inside recommendedComponentsForFrame.
+   */
+  const PLATFORM_DEFAULTS = {
+    "fixed-wing": { protocol: "SBUS", videoTier: "encrypted", cameraId: "cam-eo-ir", landingGearId: "lg-retractable", ledId: "led-nav", mountId: "mount-internal-bay", buzzerId: "bz-standard" },
+    vtol: { protocol: "SBUS", videoTier: "encrypted", cameraId: "cam-eo-ir", landingGearId: "lg-fixed-skid", ledId: "led-nav", mountId: "mount-internal-bay", buzzerId: "bz-standard" },
+    fpv: { protocol: "ELRS", videoTier: "auto", cameraId: "cam-standard", landingGearId: "lg-none", ledId: "led-none", mountId: "mount-strap", buzzerId: "bz-standard" },
+    cinelifter: { protocol: "ELRS", videoTier: "digital-hd", cameraId: "cam-eo-ir", landingGearId: "lg-fixed-skid", ledId: "led-orientation", mountId: "mount-tray-lock", buzzerId: "bz-standard" },
+    hexacopter: { protocol: "ELRS", videoTier: "digital-hd", cameraId: "cam-eo-ir", landingGearId: "lg-fixed-skid", ledId: "led-orientation", mountId: "mount-tray-lock", buzzerId: "bz-standard" },
+    octacopter: { protocol: "ELRS", videoTier: "encrypted", cameraId: "cam-eo-ir", landingGearId: "lg-fixed-skid", ledId: "led-orientation", mountId: "mount-internal-bay", buzzerId: "bz-standard" },
+    interceptor: { protocol: "ELRS", videoTier: "analog", cameraId: "cam-standard", landingGearId: "lg-none", ledId: "led-none", mountId: "mount-strap", buzzerId: "bz-standard" },
+  };
+
+  /**
+   * Given a chosen frame (and platform), adjust every part category —
+   * propulsion (battery/motor/ESC/prop), flight electronics (FC/GPS),
+   * communication (protocol/receiver/video/antenna), power delivery
+   * (power module/BEC/current sensor) and accessories (camera, landing
+   * gear, LEDs, buzzer, battery mount) — to match that frame type and
+   * platform, so switching frames re-tunes the whole build instead of
+   * just the propulsion chain.
    */
   function recommendedComponentsForFrame(frame, platformId) {
     if (!frame) return {};
@@ -253,26 +277,85 @@
     const motorPart = motor ? motor.part : null;
     let esc = null;
     if (battery && motorPart) {
-      const escCompatible = ESCS.filter((e) => e.compatibleS[0] <= battery.s && battery.s <= e.compatibleS[1]);
-      if (escCompatible.length) {
-        const sorted = escCompatible.slice().sort((a, b) => a.currentA - b.currentA);
-        esc =
-          sorted.find((e) => e.currentA >= motorPart.maxCurrentA * 1.15) ||
-          sorted.find((e) => e.currentA >= motorPart.maxCurrentA) ||
-          sorted[sorted.length - 1];
-      } else {
-        // No ESC's voltage rating covers this battery (e.g. a 2S/3S whoop
-        // build) — fall back to whichever ESC's range sits closest to it,
-        // rather than defaulting to the largest one in the catalog.
-        esc = pickClosestInRange(ESCS, (e) => e.compatibleS, battery.s);
-      }
+      // Score every ESC on both axes at once — voltage-range distance from
+      // the chosen battery, and any current shortfall against the motor's
+      // peak draw (with headroom) — rather than filtering to "voltage
+      // compatible" first. That earlier approach could strand a build on
+      // an under-current ESC whenever the only voltage-compatible option
+      // happened to be a small one, instead of picking a slightly
+      // higher-voltage ESC that actually covers the motor.
+      const requiredA = motorPart.maxCurrentA * 1.15;
+      esc = ESCS.reduce((best, e) => {
+        const [lo, hi] = e.compatibleS;
+        const vDist = battery.s < lo ? lo - battery.s : battery.s > hi ? battery.s - hi : 0;
+        const currentDeficit = Math.max(0, requiredA - e.currentA);
+        const score = currentDeficit * 10 + vDist;
+        if (!best || score < best.score) return { part: e, score };
+        return best;
+      }, null);
+      esc = esc ? esc.part : null;
     }
+
+    const profile = PLATFORM_DEFAULTS[platformId] || PLATFORM_DEFAULTS.fpv;
+
+    // Flight controller: scale with the frame's own structural weight —
+    // a 2" whoop frame and a 24" octacopter frame have very different
+    // vibration/power demands even before payload is added.
+    const fcId = frame.baseWeightG >= 1300 ? "fc-h743" : frame.baseWeightG >= 150 ? "fc-f7-hd" : "fc-f405";
+
+    // GPS: only the platforms that actually navigate autonomously need
+    // precision RTK; racing/interceptor platforms still get a basic GPS
+    // (no "none" option exists) but never the upgraded module.
+    const navigates = platformId !== "fpv" && platformId !== "interceptor";
+    const gpsId = navigates && frame.weightBudgetG >= 6000 ? "gps-m10-rtk" : "gps-m8n";
+
+    const protocol = profile.protocol;
+    const receiverMatch = RECEIVERS.find((r) => r.protocol === protocol) || RECEIVERS[0];
+
+    // Video: "auto" tiers (FPV) split on frame size — small/fast racing
+    // frames stay on lightweight analog, larger freestyle/long-range
+    // frames step up to digital HD.
+    let videoId;
+    if (profile.videoTier === "auto") {
+      videoId = frame.sizeIn && frame.sizeIn > 5 ? "vid-digital-hd" : "vid-analog";
+    } else if (profile.videoTier === "encrypted") {
+      videoId = "vid-encrypted";
+    } else if (profile.videoTier === "digital-hd") {
+      videoId = "vid-digital-hd";
+    } else {
+      videoId = "vid-analog";
+    }
+
+    const becId = videoId === "vid-analog" ? "bec-5v" : videoId === "vid-digital-hd" ? "bec-9v" : "bec-12v";
+
+    const longRangePlatforms = ["fixed-wing", "vtol", "hexacopter", "octacopter", "cinelifter"];
+    const antennaId = videoId === "vid-analog" ? "ant-stubby" : longRangePlatforms.indexOf(platformId) >= 0 ? "ant-directional" : "ant-dipole";
+
+    const motorCount = frame.motorCount || 1;
+    const peakCurrentA = motorPart ? motorPart.maxCurrentA * motorCount : 0;
+    const powerModuleId = peakCurrentA > 150 ? "pm-highcurrent" : "pm-standard";
+    const escPeakA = esc ? esc.currentA * motorCount : 0;
+    const currentSensorId = escPeakA > 90 ? "cs-180a" : "cs-90a";
 
     return {
       batteryId: battery ? battery.id : null,
       motorId: motorPart ? motorPart.id : null,
       propId: prop ? prop.id : null,
       escId: esc ? esc.id : null,
+      fcId,
+      gpsId,
+      protocol,
+      receiverId: receiverMatch ? receiverMatch.id : null,
+      videoId,
+      cameraId: profile.cameraId,
+      powerModuleId,
+      becId,
+      currentSensorId,
+      antennaId,
+      landingGearId: profile.landingGearId,
+      buzzerId: profile.buzzerId,
+      ledId: profile.ledId,
+      mountId: profile.mountId,
     };
   }
 
