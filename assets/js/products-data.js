@@ -155,6 +155,22 @@
       priceINR: 1710000,
       configurable: true,
     },
+    {
+      id: "vtol-drishti",
+      name: "DRISHTI VTOL",
+      category: "vtol",
+      status: "active",
+      tag: "Quadcopter VTOL · Surveillance",
+      icon: "vtol-alt",
+      short: "A 10-inch quadcopter surveillance VTOL with an 800 g payload capacity and 24 minutes of autonomous flight.",
+      description: "DRISHTI is a compact 10-inch quadcopter built for rapid-deployment autonomous surveillance. Running on a 3S–4S, 5,200 mAh pack, it carries an 800 g sensor payload for 24 minutes of fully autonomous flight, making it well suited for overwatch and reconnaissance over open terrain.",
+      specs: { frame: "10-Inch Quadcopter", battery: "3S–4S 5,200 mAh", flightTime: "24 min", payloadCapacity: "800 g", flightMode: "Autonomous Flight" },
+      highlights: ["10-Inch Frame", "800 g Payload", "24 min Flight Time"],
+      priceINR: 450000,
+      configurable: true,
+      coverImage: "assets/img/products/vtol-drishti-1.jpg",
+      photos: ["assets/img/products/vtol-drishti-1.jpg"],
+    },
 
     // ---------------- FPV ----------------
     {
