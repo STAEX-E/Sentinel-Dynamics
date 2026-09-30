@@ -27,14 +27,58 @@
     return;
   }
 
-  document.title = product.name + " — Sentinel Dynamics";
-  const metaDesc = document.getElementById("pd-meta-desc");
-  if (metaDesc) metaDesc.setAttribute("content", product.short);
+  const hasVariants = Array.isArray(product.variants) && product.variants.length > 0;
+  let activeVariant = hasVariants ? product.variants[0] : null;
 
-  document.getElementById("pd-tag").textContent = product.tag;
-  document.getElementById("pd-name").textContent = product.name;
-  document.getElementById("pd-short").textContent = product.short;
-  document.getElementById("pd-description").textContent = product.description;
+  const metaDesc = document.getElementById("pd-meta-desc");
+  const pdTag = document.getElementById("pd-tag");
+  const pdName = document.getElementById("pd-name");
+  const pdShort = document.getElementById("pd-short");
+  const pdDescription = document.getElementById("pd-description");
+  const specRow = document.getElementById("pd-specs");
+  const priceEl = document.getElementById("pd-price");
+  const totalEl = document.getElementById("pd-total");
+  let qty = 1;
+
+  function refreshPricing() {
+    const price = activeVariant ? activeVariant.priceINR : product.priceINR;
+    priceEl.textContent = window.formatINR(price);
+    totalEl.textContent = "Total: " + window.formatINR(price * qty);
+  }
+
+  function renderVariantContent() {
+    const name = activeVariant ? activeVariant.name : product.name;
+    const short = activeVariant ? activeVariant.short : product.short;
+    const description = activeVariant ? activeVariant.description : product.description;
+    const specs = activeVariant ? activeVariant.specs : product.specs;
+
+    document.title = name + " — Sentinel Dynamics";
+    if (metaDesc) metaDesc.setAttribute("content", short);
+    pdTag.textContent = product.tag;
+    pdName.textContent = name;
+    pdShort.textContent = short;
+    pdDescription.textContent = description;
+    specRow.innerHTML = Object.entries(specs || {})
+      .map(([key, value]) => `<div><strong>${window.escapeHtml(String(value))}</strong><span>${window.escapeHtml(labelize(key))}</span></div>`)
+      .join("");
+    refreshPricing();
+  }
+
+  const variantPicker = document.getElementById("pd-variant-picker");
+  if (hasVariants) {
+    variantPicker.style.display = "";
+    variantPicker.innerHTML = product.variants
+      .map((v, i) => `<button type="button" class="pd-variant-pill${i === 0 ? " is-active" : ""}" data-variant-id="${window.escapeHtml(v.id)}">${window.escapeHtml(v.name)}</button>`)
+      .join("");
+    variantPicker.querySelectorAll(".pd-variant-pill").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        activeVariant = product.variants.find((v) => v.id === btn.dataset.variantId) || product.variants[0];
+        variantPicker.querySelectorAll(".pd-variant-pill").forEach((b) => b.classList.remove("is-active"));
+        btn.classList.add("is-active");
+        renderVariantContent();
+      });
+    });
+  }
 
   const visual = document.getElementById("pd-visual");
   const thumbsEl = document.getElementById("pd-gallery-thumbs");
@@ -76,19 +120,7 @@
   }
   statusLine.innerHTML = statusHTML;
 
-  const specRow = document.getElementById("pd-specs");
-  specRow.innerHTML = Object.entries(product.specs || {})
-    .map(([key, value]) => `<div><strong>${window.escapeHtml(String(value))}</strong><span>${window.escapeHtml(labelize(key))}</span></div>`)
-    .join("");
-
-  const priceEl = document.getElementById("pd-price");
-  const totalEl = document.getElementById("pd-total");
-  let qty = 1;
-
-  function refreshPricing() {
-    priceEl.textContent = window.formatINR(product.priceINR);
-    totalEl.textContent = "Total: " + window.formatINR(product.priceINR * qty);
-  }
+  renderVariantContent();
 
   const isSwarm = product.category === "swarm";
   const qtyMax = isSwarm ? 100 : 20;
@@ -124,10 +156,10 @@
   document.getElementById("pd-add-cart").addEventListener("click", (e) => {
     window.SentinelCart.addItem({
       productId: product.id,
-      name: product.name,
-      config: null,
-      configLabel: "Standard Configuration",
-      unitPriceINR: product.priceINR,
+      name: activeVariant ? activeVariant.name : product.name,
+      config: activeVariant ? activeVariant.id : null,
+      configLabel: activeVariant ? activeVariant.name : "Standard Configuration",
+      unitPriceINR: activeVariant ? activeVariant.priceINR : product.priceINR,
       qty: qty,
     });
     const btn = e.currentTarget;
@@ -141,6 +173,8 @@
   });
 
   document.getElementById("pd-buy-now").addEventListener("click", () => {
-    window.location.href = "procurement.html?buyNow=" + encodeURIComponent(product.id) + "&qty=" + qty;
+    let url = "procurement.html?buyNow=" + encodeURIComponent(product.id) + "&qty=" + qty;
+    if (activeVariant) url += "&variant=" + encodeURIComponent(activeVariant.id);
+    window.location.href = url;
   });
 })();

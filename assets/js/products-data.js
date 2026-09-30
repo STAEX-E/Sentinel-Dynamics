@@ -49,6 +49,7 @@
       status: "active",
       tag: "Fixed-Wing VTOL · Surveillance & Strike",
       icon: "vtol",
+      partner: "SpaceGen Aviation",
       short: "A 4 m, IC-engine VTOL built for 3-hour surveillance and precision-strike missions.",
       description: "YHUH is Sentinel Dynamics' long-endurance fixed-wing VTOL — a 4-metre-wingspan platform powered by an internal-combustion engine for extended time-on-station. It combines persistent surveillance with a precision-strike capability via ULTGMs, operating up to 500 m / 1,640 ft.",
       specs: { wingspan: "4 m", topSpeed: "130 km/h", power: "IC Engine", endurance: "3 h", maxAltitude: "500 m / 1,640 ft", payload: "ULTGMs", role: "Surveillance + Precision Strike", weight: "18 kg MTOW" },
@@ -63,15 +64,52 @@
       status: "active",
       tag: "VTOL · Collaboration",
       icon: "vtol-alt",
-      partner: "Spatian Aviation",
-      short: "A compact 1.5 m electric VTOL for surveillance and small explosive payloads, built with Spatian Aviation.",
-      description: "ANIKETRA is a joint development between Sentinel Dynamics and Spatian Aviation — a compact, 6S electric VTOL sized for rapid deployment. It delivers an hour of surveillance endurance at altitudes up to 200 m / 656 ft, with the option to carry small explosive payloads.",
+      partner: "SpaceGen Aviation",
+      short: "A compact 1.5 m electric VTOL for surveillance and small explosive payloads, built with SpaceGen Aviation.",
+      description: "ANIKETRA is a joint development between Sentinel Dynamics and SpaceGen Aviation — a compact, 6S electric VTOL sized for rapid deployment. It delivers an hour of surveillance endurance at altitudes up to 200 m / 656 ft, with the option to carry small explosive payloads.",
       specs: { wingspan: "1.5 m", topSpeed: "120 km/h", power: "6S", endurance: "1 h", maxAltitude: "200 m / 656 ft", payload: "Surveillance + Small Explosive Payloads", weight: "4.2 kg MTOW" },
-      highlights: ["Spatian Aviation Collab", "1.5 m Wingspan", "120 km/h"],
+      highlights: ["SpaceGen Aviation Collab", "1.5 m Wingspan", "120 km/h"],
       priceINR: 2810000,
       configurable: true,
       coverImage: "assets/img/products/vtol-aniketra-1.png",
       photos: ["assets/img/products/vtol-aniketra-1.png"],
+    },
+    {
+      id: "vtol-rhyn-x",
+      name: "RHYN-X Drone",
+      category: "vtol",
+      status: "active",
+      tag: "Quadcopter VTOL · Collaboration",
+      icon: "vtol-alt",
+      partner: "SpaceGen Aviation",
+      short: "A modular quadcopter VTOL built with SpaceGen Aviation, available in Lite (high-payload) and Neo (thermal ISR) configurations.",
+      description: "RHYN-X is a modular quadcopter VTOL developed with SpaceGen Aviation around a shared airframe and two mission-tuned powertrain/payload configurations. The Lite variant maximizes payload and range for logistics and heavy-sensor missions; the Neo variant trades payload for a thermal imaging payload tuned for day/night ISR. Both fly fully autonomous missions with 4K video and 40 minutes of endurance.",
+      specs: { battery: "8S · 6,200 mAh", flightTime: "40 min", payloadCapacity: "3 kg", telemetryRange: "30 km", camera: "4K Optical", flightMode: "Autonomous Flight" },
+      highlights: ["SpaceGen Aviation Collab", "3 kg Payload", "30 km Telemetry"],
+      priceINR: 3210000,
+      configurable: false,
+      coverImage: "assets/img/products/rhyn-x-1.png",
+      photos: ["assets/img/products/rhyn-x-1.png", "assets/img/products/rhyn-x-2.png", "assets/img/products/rhyn-x-3.png"],
+      variants: [
+        {
+          id: "lite",
+          name: "RHYN-X Lite",
+          short: "A high-payload RHYN-X configuration with 30 km video telemetry and 40 minutes of autonomous flight endurance.",
+          description: "The RHYN-X Lite is built with SpaceGen Aviation for missions that need to move weight — a 3 kg payload capacity paired with an 8S, 6,200 mAh pack and 30 km of long-range video telemetry, running 4K video and fully autonomous flight for up to 40 minutes.",
+          specs: { battery: "8S · 6,200 mAh", flightTime: "40 min", payloadCapacity: "3 kg", telemetryRange: "30 km", camera: "4K Optical", flightMode: "Autonomous Flight" },
+          highlights: ["8S · 6,200 mAh", "3 kg Payload", "30 km Telemetry"],
+          priceINR: 3210000,
+        },
+        {
+          id: "neo",
+          name: "RHYN-X Neo",
+          short: "A thermal-imaging RHYN-X configuration tuned for extended ISR at 16 km video telemetry range.",
+          description: "The RHYN-X Neo is built with SpaceGen Aviation around a thermal imaging payload for day/night ISR — running on a 12S, 12,400 mAh pack with 16 km of long-range video telemetry, 4K video, and fully autonomous flight for up to 40 minutes.",
+          specs: { battery: "12S · 12,400 mAh", flightTime: "40 min", payloadCapacity: "1.2 kg", telemetryRange: "16 km", camera: "4K Optical + Thermal", flightMode: "Autonomous Flight" },
+          highlights: ["Thermal + 4K Camera", "12S · 12,400 mAh", "16 km Telemetry"],
+          priceINR: 4110000,
+        },
+      ],
     },
     {
       id: "vtol-sentry",
@@ -339,8 +377,9 @@
       <div class="product-tile__body">
         <span class="product-tile__category">${escapeHtml(CATEGORY_LABELS[p.category] || p.category)}</span>
         <h3 class="product-tile__name">${escapeHtml(p.name)}</h3>
+        ${p.partner ? `<span class="product-tile__partner">In collaboration with ${escapeHtml(p.partner)}</span>` : ""}
         <p class="product-tile__desc">${escapeHtml(p.short)}</p>
-        <div class="product-tile__specs">${chips}</div>
+        <div class="product-tile__specs">${chips}${p.variants ? `<span class="spec-chip spec-chip--variants">${p.variants.length} Configurations</span>` : ""}</div>
         <div class="product-tile__price">
           <small>Estimated Price</small>
           ${formatINR(p.priceINR)}

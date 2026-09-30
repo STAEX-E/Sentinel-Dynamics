@@ -1740,6 +1740,12 @@ body.id-verify-locked > *:not(#id-verify-overlay) {
   color: var(--c-orange);
 }
 .product-tile__name { font-size: 1.08rem; margin: 0; }
+.product-tile__partner {
+  font-size: .68rem;
+  font-weight: 600;
+  color: var(--c-gray-light);
+  font-style: italic;
+}
 .product-tile__desc { font-size: .84rem; color: var(--c-gray-light); margin: 0; }
 .product-tile__specs {
   display: flex;
@@ -1755,6 +1761,10 @@ body.id-verify-locked > *:not(#id-verify-overlay) {
   border: 1px solid var(--c-border);
   color: var(--c-gray-light);
   white-space: nowrap;
+}
+.spec-chip--variants {
+  border-color: var(--c-orange);
+  color: var(--c-orange);
 }
 .product-tile__price {
   margin-top: auto;
@@ -1827,6 +1837,31 @@ body.id-verify-locked > *:not(#id-verify-overlay) {
   align-items: center;
   gap: .6rem;
   margin-bottom: 1rem;
+}
+.pd-variant-picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem;
+  margin-bottom: 1.2rem;
+}
+.pd-variant-pill {
+  font-family: var(--ff-mono);
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: .04em;
+  padding: .5rem 1rem;
+  border-radius: 2px;
+  border: 1px solid var(--c-border);
+  background: transparent;
+  color: var(--c-gray-light);
+  cursor: pointer;
+  transition: border-color .2s ease, color .2s ease, background .2s ease;
+}
+.pd-variant-pill:hover { border-color: var(--c-orange); color: var(--c-white); }
+.pd-variant-pill.is-active {
+  border-color: var(--c-yellow);
+  color: var(--c-yellow);
+  background: rgba(244,197,24,.1);
 }
 
 /* ============================================================

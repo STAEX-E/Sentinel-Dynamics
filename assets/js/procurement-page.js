@@ -40,14 +40,16 @@
     const product = (window.SENTINEL_PRODUCTS || []).find((p) => p.id === buyNow);
     if (product) {
       const qty = Math.max(1, parseInt(params.get("qty"), 10) || 1);
+      const variantId = params.get("variant");
+      const variant = variantId && Array.isArray(product.variants) ? product.variants.find((v) => v.id === variantId) : null;
       items = [
         {
           cartItemId: "buynow-product",
           productId: product.id,
-          name: product.name,
-          config: null,
-          configLabel: "Standard Configuration",
-          unitPriceINR: product.priceINR,
+          name: variant ? variant.name : product.name,
+          config: variant ? variant.id : null,
+          configLabel: variant ? variant.name : "Standard Configuration",
+          unitPriceINR: variant ? variant.priceINR : product.priceINR,
           qty: qty,
         },
       ];
