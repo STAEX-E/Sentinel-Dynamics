@@ -123,78 +123,77 @@
     if (reduceMotion) tick(0);
   }
 
-  /* ---------------- Shared shape renderers ----------------
-     Used by the opening sequence's flying planes and helicopters. */
+  /* ---------------- 3D wireframe globe math ----------------
+     A hand-rolled rotate + perspective-project pipeline for a unit
+     sphere — no WebGL/3D library, just sin/cos and a perspective
+     divide. Used by the opening sequence below. */
 
-  // Stylized top-down fixed-wing silhouette (normalized -0.5..0.5), nose at -Y.
-  const PLANE_SHAPE = [
-    [0, -0.5], [0.045, -0.28], [0.05, -0.05],
-    [0.52, 0.1], [0.52, 0.17], [0.07, 0.08],
-    [0.09, 0.27], [0.24, 0.4], [0.24, 0.46],
-    [0.05, 0.37], [0.04, 0.5], [-0.04, 0.5],
-    [-0.05, 0.37], [-0.24, 0.46], [-0.24, 0.4],
-    [-0.09, 0.27], [-0.07, 0.08], [-0.52, 0.17],
-    [-0.52, 0.1], [-0.05, -0.05], [-0.045, -0.28],
-  ];
+  const GLOBE_TILT = -0.34; // constant tilt around X so we see a 3-quarter view
+  const GLOBE_CAM_D = 2.6; // camera distance from a unit-radius sphere
 
-  function drawPlaneShape(octx, cx, cy, s, fillStyle) {
-    octx.fillStyle = fillStyle || "#fff";
-    octx.beginPath();
-    octx.moveTo(cx + PLANE_SHAPE[0][0] * s, cy + PLANE_SHAPE[0][1] * s);
-    for (let i = 1; i < PLANE_SHAPE.length; i++) {
-      octx.lineTo(cx + PLANE_SHAPE[i][0] * s, cy + PLANE_SHAPE[i][1] * s);
+  function rotatePoint(p, rotY, tiltX) {
+    // Tilt around X first, then spin around Y.
+    let x = p[0], y = p[1], z = p[2];
+    const cx = Math.cos(tiltX), sx = Math.sin(tiltX);
+    const y1 = y * cx - z * sx;
+    const z1 = y * sx + z * cx;
+    const cy = Math.cos(rotY), sy = Math.sin(rotY);
+    const x2 = x * cy + z1 * sy;
+    const z2 = -x * sy + z1 * cy;
+    return [x2, y1, z2];
+  }
+
+  function projectPoint(p, rotY, R, cx, cy, zoom) {
+    const r = rotatePoint(p, rotY, GLOBE_TILT);
+    const scale = (GLOBE_CAM_D / (GLOBE_CAM_D - r[2])) * R * zoom;
+    return { x: cx + r[0] * scale, y: cy - r[1] * scale, z: r[2] };
+  }
+
+  function sphereFromLatLon(latDeg, lonDeg, elevate) {
+    const phi = ((90 - latDeg) * Math.PI) / 180;
+    const theta = (lonDeg * Math.PI) / 180;
+    const e = elevate || 1;
+    return [Math.sin(phi) * Math.cos(theta) * e, Math.cos(phi) * e, Math.sin(phi) * Math.sin(theta) * e];
+  }
+
+  function buildGlobeGrid() {
+    const rings = [];
+    // Latitude rings (fixed lat, sweep longitude).
+    for (let lat = -75; lat <= 75; lat += 15) {
+      const ring = [];
+      for (let i = 0; i <= 48; i++) ring.push(sphereFromLatLon(lat, (i / 48) * 360));
+      rings.push(ring);
     }
-    octx.closePath();
-    octx.fill();
+    // Longitude rings (fixed lon, sweep latitude), half-meridians so poles meet.
+    for (let lon = 0; lon < 360; lon += 15) {
+      const ring = [];
+      for (let i = 0; i <= 48; i++) ring.push(sphereFromLatLon(-90 + (i / 48) * 180, lon));
+      rings.push(ring);
+    }
+    return rings;
   }
 
-  // Top-down helicopter: rotor cross + hub, fuselage, tail boom, tail rotor.
-  // Hub/cockpit faces -Y, tail extends toward +Y (same "front" convention as the plane).
-  function drawHelicopterShape(octx, cx, cy, s, fillStyle) {
-    octx.fillStyle = fillStyle || "#fff";
-    octx.save();
-    octx.translate(cx, cy);
-
-    octx.fillRect(-0.42 * s, -0.035 * s, 0.84 * s, 0.07 * s);
-    octx.save();
-    octx.rotate(Math.PI / 2);
-    octx.fillRect(-0.42 * s, -0.035 * s, 0.84 * s, 0.07 * s);
-    octx.restore();
-    octx.beginPath();
-    octx.arc(0, 0, 0.07 * s, 0, Math.PI * 2);
-    octx.fill();
-
-    octx.beginPath();
-    octx.ellipse(0, 0.16 * s, 0.09 * s, 0.22 * s, 0, 0, Math.PI * 2);
-    octx.fill();
-
-    octx.fillRect(-0.02 * s, 0.16 * s, 0.04 * s, 0.34 * s);
-
-    octx.save();
-    octx.translate(0, 0.5 * s);
-    octx.fillRect(-0.09 * s, -0.015 * s, 0.18 * s, 0.03 * s);
-    octx.beginPath();
-    octx.arc(0, 0, 0.025 * s, 0, Math.PI * 2);
-    octx.fill();
-    octx.restore();
-
-    octx.restore();
-  }
-
-  function drawFlyerShape(octx, cx, cy, s, shapeKey, fillStyle) {
-    if (shapeKey === "heli") drawHelicopterShape(octx, cx, cy, s, fillStyle);
-    else drawPlaneShape(octx, cx, cy, s, fillStyle);
+  function slerp(a, b, t) {
+    const dot = Math.max(-1, Math.min(1, a[0] * b[0] + a[1] * b[1] + a[2] * b[2]));
+    const omega = Math.acos(dot);
+    if (omega < 1e-6) return a.slice();
+    const sinO = Math.sin(omega);
+    const wa = Math.sin((1 - t) * omega) / sinO;
+    const wb = Math.sin(t * omega) / sinO;
+    return [a[0] * wa + b[0] * wb, a[1] * wa + b[1] * wb, a[2] * wa + b[2] * wb];
   }
 
   /* ---------------- Opening sequence ----------------
-     A handful of planes and helicopters fly around a full-screen
-     splash for a couple of seconds, then fade out to reveal the
-     actual home page. The home page itself has no special hero
-     particles — just the ambient background field drifting behind
-     it like every other page. */
+     A dark, high-tech wireframe globe rotates slowly while a few
+     flights arc between cities, leaving fading flight-path trails.
+     The globe then spins up and rushes the camera, dissolving into
+     a bold "SENTINEL DYNAMICS" reveal before the overlay fades to
+     reveal the actual home page underneath — already fully
+     rendered, so the hand-off feels seamless. */
   function initIntroSequence() {
     const overlay = document.getElementById("intro-overlay");
     const canvas = document.getElementById("intro-canvas");
+    const brand = overlay ? overlay.querySelector(".intro-brand") : null;
     if (!overlay || !canvas) return;
 
     if (reduceMotion) {
@@ -203,37 +202,45 @@
     }
 
     const ctx = canvas.getContext("2d");
-    let w, h;
+    let w, h, cx, cy, R;
     function resize() {
       w = canvas.width = window.innerWidth * DPR;
       h = canvas.height = window.innerHeight * DPR;
       canvas.style.width = window.innerWidth + "px";
       canvas.style.height = window.innerHeight + "px";
+      cx = w / 2;
+      cy = h / 2;
+      R = Math.min(w, h) * 0.3;
     }
     resize();
     window.addEventListener("resize", resize);
 
-    const FLYER_SHAPES = ["plane", "heli"];
-    const DURATION = 2600;
+    const GRID = buildGlobeGrid();
+
+    // A handful of real cities standing in for "global reach" — HQ first.
+    const CITIES = [
+      sphereFromLatLon(17.4, 78.5), // Hyderabad
+      sphereFromLatLon(51.5, -0.1), // London
+      sphereFromLatLon(40.7, -74.0), // New York
+      sphereFromLatLon(35.7, 139.7), // Tokyo
+      sphereFromLatLon(25.2, 55.3), // Dubai
+      sphereFromLatLon(-33.9, 151.2), // Sydney
+    ];
+    const ROUTES = [
+      [0, 1], [2, 3], [4, 5], [1, 4],
+    ];
+
+    const PHASE1_END = 4600; // globe cruising + flights
+    const PHASE2_END = PHASE1_END + 900; // rapid spin + zoom into camera
+    const LOGO_HOLD_END = PHASE2_END + 1700; // hold the bold reveal
     const FADE = 700;
+
+    const FLIGHT_LAUNCH = [300, 1300, 2300, 3200];
+    const FLIGHT_DURATION = 2000;
+
     let start = null;
     let done = false;
-
-    const flyers = Array.from({ length: 6 }, () => {
-      const angle = Math.random() * Math.PI * 2;
-      const speed = (0.32 + Math.random() * 0.3) * DPR;
-      return {
-        shape: FLYER_SHAPES[Math.floor(Math.random() * FLYER_SHAPES.length)],
-        x: Math.random() * w,
-        y: Math.random() * h,
-        vx: Math.cos(angle) * speed,
-        vy: Math.sin(angle) * speed,
-        size: (28 + Math.random() * 22) * DPR,
-        wobble: Math.random() * Math.PI * 2,
-        wobbleSpeed: 0.0018 + Math.random() * 0.0018,
-        color: Math.random() > 0.7 ? "rgba(255,122,26,0.92)" : "rgba(244,197,24,0.92)",
-      };
-    });
+    let brandShown = false;
 
     function finish() {
       if (done) return;
@@ -243,37 +250,135 @@
       setTimeout(() => overlay.remove(), FADE + 150);
     }
 
+    function drawGlobe(rotY, alpha, zoom) {
+      // Canvas strokes a whole path in one color, so per-vertex fading
+      // (dimming the grid toward the far side of the sphere) needs each
+      // segment stroked individually rather than one path per ring.
+      ctx.lineWidth = 1 * DPR;
+      for (const ring of GRID) {
+        let prev = null;
+        for (let i = 0; i < ring.length; i++) {
+          const p = projectPoint(ring[i], rotY, R, cx, cy, zoom);
+          const depthAlpha = Math.max(0, (p.z + 0.55) / 1.15);
+          if (prev && prev.depthAlpha > 0.02 && depthAlpha > 0.02) {
+            const segAlpha = (prev.depthAlpha + depthAlpha) / 2;
+            ctx.strokeStyle = `rgba(140,168,196,${0.5 * segAlpha * alpha})`;
+            ctx.beginPath();
+            ctx.moveTo(prev.x, prev.y);
+            ctx.lineTo(p.x, p.y);
+            ctx.stroke();
+          }
+          prev = { x: p.x, y: p.y, depthAlpha };
+        }
+      }
+    }
+
+    function drawFlights(rotY, elapsed, zoom) {
+      ROUTES.forEach((route, idx) => {
+        const launchAt = FLIGHT_LAUNCH[idx % FLIGHT_LAUNCH.length];
+        const t = (elapsed - launchAt) / FLIGHT_DURATION;
+        if (t < 0 || t > 1.08) return;
+        const tc = Math.min(1, t);
+        const a = CITIES[route[0]];
+        const b = CITIES[route[1]];
+
+        // Fading trail: sample the arc behind the current position.
+        const TRAIL_STEPS = 26;
+        for (let i = 0; i < TRAIL_STEPS; i++) {
+          const ft = tc * (i / TRAIL_STEPS);
+          if (ft > tc) continue;
+          const elevate = 1 + 0.035 * Math.sin(ft * Math.PI);
+          const pt = slerp(a, b, ft).map((v) => v * elevate);
+          const proj = projectPoint(pt, rotY, R, cx, cy, zoom);
+          if (proj.z < -0.5) continue;
+          const trailAlpha = (i / TRAIL_STEPS) * 0.55 * Math.max(0, 1 - t * 0.15);
+          ctx.beginPath();
+          ctx.fillStyle = `rgba(244,197,24,${trailAlpha})`;
+          ctx.arc(proj.x, proj.y, 1.1 * DPR, 0, Math.PI * 2);
+          ctx.fill();
+        }
+
+        // The aircraft itself: a small bright chevron at the current point.
+        const elevate = 1 + 0.035 * Math.sin(tc * Math.PI);
+        const here = slerp(a, b, tc).map((v) => v * elevate);
+        const ahead = slerp(a, b, Math.min(1, tc + 0.02)).map((v) => v * elevate);
+        const p0 = projectPoint(here, rotY, R, cx, cy, zoom);
+        const p1 = projectPoint(ahead, rotY, R, cx, cy, zoom);
+        if (p0.z < -0.4) return;
+        const heading = Math.atan2(p1.y - p0.y, p1.x - p0.x);
+        const glow = Math.max(0, (p0.z + 0.4) / 1.4);
+        ctx.save();
+        ctx.translate(p0.x, p0.y);
+        ctx.rotate(heading);
+        const s = 5.5 * DPR;
+        ctx.fillStyle = `rgba(255,214,120,${0.55 + 0.45 * glow})`;
+        ctx.beginPath();
+        ctx.moveTo(s, 0);
+        ctx.lineTo(-s * 0.7, s * 0.55);
+        ctx.lineTo(-s * 0.35, 0);
+        ctx.lineTo(-s * 0.7, -s * 0.55);
+        ctx.closePath();
+        ctx.fill();
+        ctx.restore();
+      });
+    }
+
+    function easeInExpo(x) {
+      return x <= 0 ? 0 : Math.pow(2, 10 * x - 10);
+    }
+
     function tick(t) {
       if (start === null) start = t;
       const elapsed = t - start;
       ctx.clearRect(0, 0, w, h);
 
-      for (const d of flyers) {
-        d.vx += Math.sin(t * d.wobbleSpeed + d.wobble) * 0.012 * DPR;
-        d.vy += Math.cos(t * d.wobbleSpeed + d.wobble) * 0.012 * DPR;
-        d.x += d.vx;
-        d.y += d.vy;
-        if (d.x < -50 * DPR) d.x = w + 50 * DPR;
-        if (d.x > w + 50 * DPR) d.x = -50 * DPR;
-        if (d.y < -50 * DPR) d.y = h + 50 * DPR;
-        if (d.y > h + 50 * DPR) d.y = -50 * DPR;
-
-        // Nose (both shapes) points toward -Y before rotation, so align
-        // it to the velocity vector so each flyer banks toward its heading.
-        const heading = Math.atan2(d.vx, -d.vy);
-        ctx.save();
-        ctx.translate(d.x, d.y);
-        ctx.rotate(heading);
-        drawFlyerShape(ctx, 0, 0, d.size, d.shape, d.color);
-        ctx.restore();
+      if (elapsed <= PHASE1_END) {
+        const rotY = elapsed * 0.00035;
+        drawGlobe(rotY, 1, 1);
+        drawFlights(rotY, elapsed, 1);
+      } else if (elapsed <= PHASE2_END) {
+        // Rapid spin-up + rush toward camera, fading out as it overscales.
+        const p = (elapsed - PHASE1_END) / (PHASE2_END - PHASE1_END);
+        const eased = easeInExpo(p);
+        const rotY = PHASE1_END * 0.00035 + eased * 3.4;
+        const zoom = 1 + eased * 7;
+        const alpha = Math.max(0, 1 - Math.pow(p, 1.6) * 1.15);
+        drawGlobe(rotY, alpha, zoom);
+        // A brief bright flash right at the climax sells the "burst
+        // through into the logo" feeling.
+        if (p > 0.72) {
+          const flash = (p - 0.72) / 0.28;
+          const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, Math.max(w, h) * 0.6);
+          grad.addColorStop(0, `rgba(255,244,214,${0.5 * flash})`);
+          grad.addColorStop(1, "rgba(255,244,214,0)");
+          ctx.fillStyle = grad;
+          ctx.fillRect(0, 0, w, h);
+        }
+        if (!brandShown) {
+          brandShown = true;
+          if (brand) brand.classList.add("is-visible");
+        }
+      } else if (elapsed <= LOGO_HOLD_END) {
+        // Hold on the bold reveal — nothing more to draw on canvas.
+      } else if (!done) {
+        finish();
       }
 
-      if (!done && elapsed >= DURATION) finish();
       if (!done) requestAnimationFrame(tick);
     }
 
     requestAnimationFrame(tick);
-    overlay.addEventListener("click", finish, { once: true });
+    overlay.addEventListener(
+      "click",
+      () => {
+        if (brand && !brandShown) {
+          brandShown = true;
+          brand.classList.add("is-visible");
+        }
+        finish();
+      },
+      { once: true }
+    );
   }
 
   document.addEventListener("DOMContentLoaded", () => {
