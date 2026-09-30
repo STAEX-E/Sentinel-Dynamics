@@ -225,17 +225,23 @@
       sphereFromLatLon(35.7, 139.7), // Tokyo
       sphereFromLatLon(25.2, 55.3), // Dubai
       sphereFromLatLon(-33.9, 151.2), // Sydney
+      sphereFromLatLon(55.75, 37.6), // Moscow
+      sphereFromLatLon(28.6, 77.2), // Delhi
+      sphereFromLatLon(24.45, 54.4), // Abu Dhabi
+      sphereFromLatLon(41.85, -87.65), // Chicago
+      sphereFromLatLon(19.4, -99.1), // Mexico City
     ];
     const ROUTES = [
-      [0, 1], [2, 3], [4, 5], [1, 4],
+      [0, 1], [2, 3], [4, 5], [7, 6], [8, 9], [9, 10], [1, 7],
     ];
 
+    const CRUISE_ROT_SPEED = 0.00055; // rad/ms during the cruising phase
     const PHASE1_END = 4600; // globe cruising + flights
     const PHASE2_END = PHASE1_END + 900; // rapid spin + zoom into camera
     const LOGO_HOLD_END = PHASE2_END + 1700; // hold the bold reveal
     const FADE = 700;
 
-    const FLIGHT_LAUNCH = [300, 1300, 2300, 3200];
+    const FLIGHT_LAUNCH = [200, 900, 1700, 2500, 3300];
     const FLIGHT_DURATION = 2000;
 
     let start = null;
@@ -298,7 +304,8 @@
           ctx.fill();
         }
 
-        // The aircraft itself: a small bright chevron at the current point.
+        // The aircraft itself: a small sleek plane silhouette at the
+        // current point, nose pointed along its direction of travel.
         const elevate = 1 + 0.035 * Math.sin(tc * Math.PI);
         const here = slerp(a, b, tc).map((v) => v * elevate);
         const ahead = slerp(a, b, Math.min(1, tc + 0.02)).map((v) => v * elevate);
@@ -310,17 +317,30 @@
         ctx.save();
         ctx.translate(p0.x, p0.y);
         ctx.rotate(heading);
-        const s = 5.5 * DPR;
-        ctx.fillStyle = `rgba(255,214,120,${0.55 + 0.45 * glow})`;
-        ctx.beginPath();
-        ctx.moveTo(s, 0);
-        ctx.lineTo(-s * 0.7, s * 0.55);
-        ctx.lineTo(-s * 0.35, 0);
-        ctx.lineTo(-s * 0.7, -s * 0.55);
-        ctx.closePath();
-        ctx.fill();
+        drawPlaneIcon(ctx, 8.5 * DPR, `rgba(255,214,120,${0.6 + 0.4 * glow})`);
         ctx.restore();
       });
+    }
+
+    // A small top-down airplane silhouette, nose pointing along +X
+    // (the caller rotates the canvas to the heading before calling this).
+    // s is the nose-to-tail half-length.
+    const PLANE_ICON_SHAPE = [
+      [1.0, 0], [0.56, 0.09], [0.1, 0.1], [-0.2, 1.04], [-0.34, 1.04],
+      [-0.16, 0.14], [-0.54, 0.18], [-0.8, 0.48], [-0.92, 0.48],
+      [-0.74, 0.1], [-1.0, 0.08], [-1.0, -0.08], [-0.74, -0.1],
+      [-0.92, -0.48], [-0.8, -0.48], [-0.54, -0.18], [-0.16, -0.14],
+      [-0.34, -1.04], [-0.2, -1.04], [0.1, -0.1], [0.56, -0.09],
+    ];
+    function drawPlaneIcon(octx, s, fillStyle) {
+      octx.fillStyle = fillStyle;
+      octx.beginPath();
+      octx.moveTo(PLANE_ICON_SHAPE[0][0] * s, PLANE_ICON_SHAPE[0][1] * s);
+      for (let i = 1; i < PLANE_ICON_SHAPE.length; i++) {
+        octx.lineTo(PLANE_ICON_SHAPE[i][0] * s, PLANE_ICON_SHAPE[i][1] * s);
+      }
+      octx.closePath();
+      octx.fill();
     }
 
     function easeInExpo(x) {
@@ -333,14 +353,14 @@
       ctx.clearRect(0, 0, w, h);
 
       if (elapsed <= PHASE1_END) {
-        const rotY = elapsed * 0.00035;
+        const rotY = elapsed * CRUISE_ROT_SPEED;
         drawGlobe(rotY, 1, 1);
         drawFlights(rotY, elapsed, 1);
       } else if (elapsed <= PHASE2_END) {
         // Rapid spin-up + rush toward camera, fading out as it overscales.
         const p = (elapsed - PHASE1_END) / (PHASE2_END - PHASE1_END);
         const eased = easeInExpo(p);
-        const rotY = PHASE1_END * 0.00035 + eased * 3.4;
+        const rotY = PHASE1_END * CRUISE_ROT_SPEED + eased * 3.4;
         const zoom = 1 + eased * 7;
         const alpha = Math.max(0, 1 - Math.pow(p, 1.6) * 1.15);
         drawGlobe(rotY, alpha, zoom);
