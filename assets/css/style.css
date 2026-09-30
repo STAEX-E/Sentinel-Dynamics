@@ -626,6 +626,27 @@ p { color: var(--c-gray-light); line-height: 1.65; font-size: 1rem; }
 }
 .panel:hover::before { transform: scaleX(1); }
 
+.panel--ceo {
+  background-image: url("../img/ceo-photo.png"), linear-gradient(160deg, var(--c-panel), var(--c-bg-soft));
+  background-size: cover, cover;
+  background-position: right center, center;
+  background-repeat: no-repeat, no-repeat;
+  min-height: 360px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.panel--ceo__content {
+  max-width: 50%;
+}
+@media (max-width: 640px) {
+  .panel--ceo__content { max-width: 100%; }
+  .panel--ceo {
+    background-image: linear-gradient(160deg, var(--c-panel), var(--c-bg-soft));
+    min-height: 0;
+  }
+}
+
 .grid {
   display: grid;
   gap: 1rem;
