@@ -266,6 +266,23 @@
       priceINR: 1310000,
       configurable: false,
     },
+    {
+      id: "cuas-heavycore",
+      name: "HeavyCore Jammer",
+      category: "counter-uas",
+      status: "active",
+      tag: "Counter-UAS · Directional Jamming",
+      icon: "rf",
+      partner: "SpaceGen Aviation",
+      short: "A tripod-mounted, dual-antenna RF jammer built for sustained 3 km denial coverage.",
+      description: "HeavyCore is a tripod-mounted directional jammer built around a dual-antenna RF front end for continuous, high-power denial of drone control and video links out to 3 km. Its sealed, heavy-duty housing is built for fixed-post and perimeter deployments where sustained runtime matters more than portability.",
+      specs: { class: "Directional RF Jammer", frequencyBands: "2.4 / 5.8 GHz", jamRange: "Up to 3 km", mount: "Tripod / Fixed-Post", power: "AC / Vehicle", weight: "11 kg" },
+      highlights: ["Up to 3 km Range", "Dual-Antenna", "Tripod-Mounted"],
+      coverImage: "assets/img/products/cuas-heavycore-jammer-1.jpg",
+      photos: ["assets/img/products/cuas-heavycore-jammer-1.jpg", "assets/img/products/cuas-heavycore-jammer-2.jpg"],
+      priceINR: 1150000,
+      configurable: false,
+    },
 
     // ---------------- Future Development (not yet active) ----------------
     {
