@@ -54,8 +54,10 @@
       description: "YHUH is Sentinel Dynamics' long-endurance fixed-wing VTOL — a 4-metre-wingspan platform powered by an internal-combustion engine for extended time-on-station. It combines persistent surveillance with a precision-strike capability via ULTGMs, operating up to 500 m / 1,640 ft.",
       specs: { wingspan: "4 m", topSpeed: "130 km/h", power: "IC Engine", endurance: "3 h", maxAltitude: "500 m / 1,640 ft", payload: "ULTGMs", role: "Surveillance + Precision Strike", weight: "18 kg MTOW" },
       highlights: ["4 m Wingspan", "3 h Endurance", "130 km/h"],
-      priceINR: 15010000,
+      priceINR: 16000000,
       configurable: true,
+      coverImage: "assets/img/products/vtol-vyuh-1.jpg",
+      photos: ["assets/img/products/vtol-vyuh-1.jpg", "assets/img/products/vtol-vyuh-2.jpg"],
     },
     {
       id: "vtol-aniketra",
@@ -69,7 +71,7 @@
       description: "ANIKETRA is a joint development between Sentinel Dynamics and SpaceGen Aviation — a compact, 6S electric VTOL sized for rapid deployment. It delivers an hour of surveillance endurance at altitudes up to 200 m / 656 ft, with the option to carry small explosive payloads.",
       specs: { wingspan: "1.5 m", topSpeed: "120 km/h", power: "6S", endurance: "1 h", maxAltitude: "200 m / 656 ft", payload: "Surveillance + Small Explosive Payloads", weight: "4.2 kg MTOW" },
       highlights: ["SpaceGen Aviation Collab", "1.5 m Wingspan", "120 km/h"],
-      priceINR: 2810000,
+      priceINR: 1510000,
       configurable: true,
       coverImage: "assets/img/products/vtol-aniketra-1.png",
       photos: ["assets/img/products/vtol-aniketra-1.png"],
@@ -89,7 +91,7 @@
       priceINR: 3210000,
       configurable: false,
       coverImage: "assets/img/products/rhyn-x-1.png",
-      photos: ["assets/img/products/rhyn-x-1.png", "assets/img/products/rhyn-x-2.png", "assets/img/products/rhyn-x-3.png"],
+      photos: ["assets/img/products/rhyn-x-orig-1.jpg", "assets/img/products/rhyn-x-orig-2.jpg", "assets/img/products/rhyn-x-orig-3.jpg"],
       variants: [
         {
           id: "lite",
@@ -122,7 +124,7 @@
       description: "SENTRY is a mid-size electric VTOL purpose-built for intelligence, surveillance and reconnaissance. Its 2.4 m wingspan and 12S powertrain deliver 2 hours of on-station time carrying a dedicated ISR sensor pod, at altitudes up to 350 m / 1,148 ft.",
       specs: { wingspan: "2.4 m", topSpeed: "110 km/h", power: "12S", endurance: "2 h", maxAltitude: "350 m / 1,148 ft", payload: "ISR Sensor Pod", weight: "7.5 kg MTOW" },
       highlights: ["2.4 m Wingspan", "2 h Endurance", "ISR Pod"],
-      priceINR: 4510000,
+      priceINR: 1710000,
       configurable: true,
     },
     {
@@ -136,7 +138,7 @@
       description: "ATLAS moves supplies into forward positions without any runway or road dependency. Its 3 m wingspan and hybrid-electric powertrain give it 2.5 hours of endurance carrying a cargo resupply payload, operating up to 300 m / 984 ft.",
       specs: { wingspan: "3 m", topSpeed: "95 km/h", power: "Hybrid-Electric", endurance: "2.5 h", maxAltitude: "300 m / 984 ft", payload: "Cargo Resupply", weight: "12 kg MTOW" },
       highlights: ["3 m Wingspan", "2.5 h Endurance", "Cargo Resupply"],
-      priceINR: 5510000,
+      priceINR: 6310000,
       configurable: true,
     },
     {
@@ -150,7 +152,7 @@
       description: "Launches and lands vertically on its tail, then transitions to fast, efficient forward flight. Running on an 8S–12S pack, the tail-sitter reaches 200 km/h with a maximum endurance of 45 minutes while carrying an explosive payload.",
       specs: { frame: "Tail-Sitter", topSpeed: "200 km/h", battery: "8S–12S", enduranceMax: "45 min", payload: "Explosive Payload", weight: "6.5 kg" },
       highlights: ["200 km/h", "45 min Max", "Tail-Sitter"],
-      priceINR: 2010000,
+      priceINR: 1710000,
       configurable: true,
     },
 
@@ -229,7 +231,7 @@
       description: "A balanced, agile 5-inch airframe built for coordinated swarm operations. Priced and sold per drone — choose the quantity to set the size of your swarm.",
       specs: { frame: "5-Inch", battery: "3S–6S", endurance: "15 min", role: "Coordinated Swarm Node", weight: "0.9 kg" },
       highlights: ["5-Inch", "Swarm Node", "Per-Drone Pricing"],
-      priceINR: 65000,
+      priceINR: 77000,
       configurable: true,
     },
     {
@@ -243,7 +245,7 @@
       description: "The largest and longest-legged airframe in the swarm line. Priced and sold per drone — choose the quantity to set the size of your swarm, from a handful of nodes to a full formation.",
       specs: { frame: "7-Inch", battery: "4S–6S", endurance: "17 min", role: "Coordinated Swarm Node", weight: "1.6 kg" },
       highlights: ["7-Inch", "Swarm Node", "Per-Drone Pricing"],
-      priceINR: 65000,
+      priceINR: 83000,
       configurable: true,
     },
 
@@ -306,7 +308,7 @@
       specs: { class: "Detection System", range: "3 km Radius", sensor: "Acoustic + RF Fusion", power: "Grid / Battery", weight: "14 kg" },
       highlights: ["3 km Radius", "Acoustic + RF", "Early Warning"],
       photos: ["assets/img/products/cuas-detector-1.png"],
-      priceINR: 4210000,
+      priceINR: 900000,
       configurable: false,
     },
     {
@@ -321,7 +323,7 @@
       specs: { class: "RF Spectrum Monitor", frequencyRange: "70 MHz – 6 GHz", range: "5 km Radius", power: "Grid / Vehicle", weight: "22 kg" },
       highlights: ["70 MHz – 6 GHz", "5 km Radius", "Spectrum Monitor"],
       photos: ["assets/img/products/cuas-rf-detection-1.png"],
-      priceINR: 6810000,
+      priceINR: 510000,
       configurable: false,
     },
     {
@@ -342,7 +344,7 @@
         "assets/img/products/cuas-backpack-4.png",
         "assets/img/products/cuas-backpack-5.png",
       ],
-      priceINR: 2450000,
+      priceINR: 1310000,
       configurable: false,
     },
   ];
