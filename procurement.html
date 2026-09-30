@@ -8,7 +8,7 @@
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 24 24%27%3E%3Cdefs%3E%3ClinearGradient id=%27g%27 x1=%270%27 y1=%270%27 x2=%271%27 y2=%271%27%3E%3Cstop offset=%270%25%27 stop-color=%27%23f4c518%27/%3E%3Cstop offset=%27100%25%27 stop-color=%27%23ff7a1a%27/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpolygon points=%2712,0 24,6 24,18 12,24 0,18 0,6%27 fill=%27url(%23g)%27/%3E%3C/svg%3E">
 <link rel="stylesheet" href="assets/css/style.css">
 </head>
-<body>
+<body data-verify-gate="true">
 
 <canvas id="bg-field" aria-hidden="true"></canvas>
 <div id="scroll-progress"></div>
@@ -21,7 +21,8 @@
   <div class="nav__right">
     <div class="nav__links">
     <a href="index.html">Home</a>
-    <a href="products.html">Products</a>
+    <a href="products.html?type=uas">UAS</a>
+    <a href="products.html?type=cuas">CUAS</a>
     <a href="forge-lab.html">Forge Lab</a>
     <a href="business-model.html">Business Model</a>
     <div class="nav__dropdown">
@@ -44,6 +45,9 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="9" cy="21" r="1.4"/><circle cx="19" cy="21" r="1.4"/><path d="M2.5 3h2l2.6 12.6a2 2 0 0 0 2 1.6h8a2 2 0 0 0 2-1.9L21 8H6"/></svg>
         <span class="cart-badge" data-cart-badge>00</span>
       </a>
+      <button type="button" id="nav-logout-btn" class="nav__icon-btn" aria-label="Log Out" title="Log Out" style="display:none;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>
+      </button>
     </div>
   </div>
 </nav>
@@ -94,7 +98,8 @@
   <div class="foot__brand">Sentinel Dynamics</div>
   <nav>
     <a href="index.html">Home</a>
-    <a href="products.html">Products</a>
+    <a href="products.html?type=uas">UAS</a>
+    <a href="products.html?type=cuas">CUAS</a>
     <a href="forge-lab.html">Forge Lab</a>
     <a href="product-search.html">Search</a>
     <a href="compare.html">Compare</a>

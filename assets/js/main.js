@@ -20,6 +20,17 @@
     window.addEventListener("scroll", onScroll, { passive: true });
     onScroll();
 
+    // Log Out — only shown once a defense-personnel attestation has been
+    // completed (see verify.js); clears it and returns to the homepage.
+    const logoutBtn = document.getElementById("nav-logout-btn");
+    if (logoutBtn && window.SentinelVerify) {
+      if (window.SentinelVerify.isVerified()) logoutBtn.style.display = "";
+      logoutBtn.addEventListener("click", () => {
+        window.SentinelVerify.clearVerified();
+        window.location.href = "index.html";
+      });
+    }
+
     // Reveal-on-scroll
     const revealEls = document.querySelectorAll(".reveal, .reveal-stagger");
     if ("IntersectionObserver" in window) {

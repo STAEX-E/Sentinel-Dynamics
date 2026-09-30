@@ -138,17 +138,34 @@
     renderStep1();
   }
 
+  function clearVerified() {
+    try {
+      localStorage.removeItem(KEY);
+    } catch (e) { /* storage unavailable */ }
+  }
+
   function lockPageUntilVerified() {
     if (isVerified()) return;
     document.body.classList.add("id-verify-locked");
     buildOverlay();
   }
 
-  window.SentinelVerify = { isVerified, lockPageUntilVerified };
+  window.SentinelVerify = { isVerified, clearVerified, lockPageUntilVerified };
+
+  // Only pages that opt in via data-verify-gate="true" (procurement — the
+  // actual checkout step) lock immediately on load. Every other page just
+  // gets window.SentinelVerify for read/clear (e.g. the nav's Log Out
+  // button) without blocking anything — browsing the cart itself doesn't
+  // require verification, only proceeding to procurement does.
+  function maybeAutoGate() {
+    if (document.body && document.body.dataset.verifyGate === "true") {
+      lockPageUntilVerified();
+    }
+  }
 
   if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", lockPageUntilVerified);
+    document.addEventListener("DOMContentLoaded", maybeAutoGate);
   } else {
-    lockPageUntilVerified();
+    maybeAutoGate();
   }
 })();

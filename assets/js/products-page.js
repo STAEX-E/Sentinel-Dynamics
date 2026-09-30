@@ -15,13 +15,23 @@
   const select = document.getElementById("category-filter");
   const products = window.SENTINEL_PRODUCTS || [];
 
+  // The nav's "UAS" / "CUAS" links use ?type=; deep links from elsewhere
+  // (the homepage network diagram, etc.) still use ?category=<exact
+  // category>, including ?category=counter-uas — both are honored below.
   function paramCategory() {
     const params = new URLSearchParams(window.location.search);
-    return params.get("category") || "all";
+    const type = params.get("type");
+    if (type === "uas" || type === "cuas") return type;
+    const category = params.get("category");
+    if (category === "counter-uas") return "cuas";
+    return category || "uas";
   }
 
   function render(category) {
-    const filtered = category === "all" ? products : products.filter((p) => p.category === category);
+    let filtered;
+    if (category === "uas") filtered = products.filter((p) => p.category !== "counter-uas");
+    else if (category === "cuas") filtered = products.filter((p) => p.category === "counter-uas");
+    else filtered = products.filter((p) => p.category === category);
     grid.innerHTML = filtered.map((p) => window.renderProductTile(p)).join("");
     if (countEl) countEl.textContent = filtered.length;
   }
