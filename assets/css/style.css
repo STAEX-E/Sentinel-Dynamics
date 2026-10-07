@@ -1479,173 +1479,127 @@ body.id-verify-locked > *:not(#id-verify-overlay) {
 }
 
 /* ============================================================
-   Business Model page — journey timeline (GSAP ScrollTrigger)
-   Pinned section that slides a horizontal track sideways as the
-   page scrolls; each stage's stem, dot and copy reveal in turn.
-   See assets/js/journey-timeline.js.
+   Business Model page — journey timeline
    ============================================================ */
-.gsap-journey {
+.journey {
   position: relative;
-  width: 100%;
-  height: 175vw;
-  color: var(--c-white);
+  margin-top: clamp(2rem, 5vw, 3rem);
+  padding-left: clamp(64px, 8vw, 96px);
 }
-.gsap-journey__viewport {
-  position: sticky;
+.journey__line {
+  position: absolute;
+  left: 27px;
+  top: 6px;
+  bottom: 6px;
+  width: 2px;
+  background: var(--c-border);
+}
+.journey__line-fill {
+  position: absolute;
   top: 0;
-  width: 100%;
-  height: 100vh;
-  padding-top: 9%;
-  overflow: hidden;
-}
-.gsap-journey__slider {
-  display: flex;
-  align-items: center;
-  gap: 5vw;
-  height: 32vw;
-  width: max-content;
-  padding-inline: 5vw;
-  margin-right: 2vw;
-}
-.gsap-journey__image {
-  flex: 0 0 28vw;
-  height: 100%;
-  overflow: hidden;
-  border-radius: 6px;
-}
-.gsap-journey__image img {
-  height: 100%;
-  width: 100%;
-  object-fit: cover;
-}
-.gsap-journey__track {
-  position: relative;
-  flex: 0 0 auto;
-  width: max-content;
-  height: 100%;
-}
-
-.gsap-journey__line-wrap {
-  position: absolute;
   left: 0;
-  top: 50%;
-  transform: translateY(-50%);
   width: 100%;
-  display: flex;
-  align-items: center;
-}
-.gsap-journey__line-dot {
-  flex-shrink: 0;
-  width: .8vw;
-  height: .8vw;
-  border-radius: 50%;
-  background: linear-gradient(135deg, var(--c-yellow), var(--c-orange));
-}
-.gsap-journey__line {
-  height: 1px;
-  width: 0%;
-  border-radius: 2px;
-  background: linear-gradient(90deg, var(--c-yellow), var(--c-orange));
-}
-
-.gsap-journey__row {
-  display: flex;
-  align-items: center;
-  gap: 1vw;
-  width: max-content;
-  height: 50%;
-}
-.gsap-journey__row--top { align-items: flex-end; }
-.gsap-journey__row--bottom { align-items: flex-start; }
-
-.gsap-journey__title-col,
-.gsap-journey__period-col {
-  flex-shrink: 0;
-  width: 16vw;
-}
-.gsap-journey__title {
-  font-size: 2.1vw;
-  line-height: 0.95;
-  margin: 0;
-}
-.gsap-journey__period {
-  font-size: 1.3vw;
-  line-height: 1;
-  color: var(--c-gray-light);
-  margin: 0;
-}
-
-.gsap-journey__items {
-  display: flex;
-  align-items: stretch;
-  height: 100%;
-  gap: 7vw;
-}
-.gsap-journey__row--top .gsap-journey__items { align-items: flex-end; }
-.gsap-journey__row--bottom .gsap-journey__items { align-items: flex-start; }
-
-.gsap-journey__item {
-  position: relative;
-  flex-shrink: 0;
-  width: 22vw;
-  padding-inline: 1.4vw;
-}
-.gsap-journey__row--top .gsap-journey__item { padding-bottom: 1.6vw; }
-.gsap-journey__row--bottom .gsap-journey__item-body { padding-top: 1.6vw; }
-.gsap-journey__row--bottom .gsap-journey__item-body {
-  display: flex;
-  flex-direction: column;
-}
-
-.gsap-journey__item-line-wrap {
-  position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: 100%;
-}
-.gsap-journey__item-line {
-  position: absolute;
-  left: 0;
-  width: 1px;
-  height: 100%;
+  height: 0%;
   background: linear-gradient(var(--c-yellow), var(--c-orange));
+  border-radius: 2px;
 }
-.gsap-journey__row--top .gsap-journey__item-line { bottom: 0; transform-origin: bottom; }
-.gsap-journey__row--bottom .gsap-journey__item-line { top: 0; transform-origin: top; }
-.gsap-journey__item-dot {
+.journey__step {
+  position: relative;
+  padding-bottom: clamp(2.6rem, 6vw, 4rem);
+}
+.journey__step:last-child { padding-bottom: 0; }
+.journey__badge {
   position: absolute;
-  left: 0;
-  width: .7vw;
-  height: .7vw;
-  transform: translateX(-50%);
+  left: clamp(-64px, -8vw, -96px);
+  top: 0;
+  width: 56px;
+  height: 56px;
   border-radius: 50%;
-  background: linear-gradient(135deg, var(--c-yellow), var(--c-orange));
-}
-.gsap-journey__row--top .gsap-journey__item-dot { top: 0; }
-.gsap-journey__row--bottom .gsap-journey__item-dot { bottom: 0; }
-
-.gsap-journey__item .icon-tile { margin-bottom: .7vw; }
-.gsap-journey__item h4 {
-  font-size: 1.25vw;
-  line-height: 1.15;
-  margin: 0 0 .5vw;
-}
-.gsap-journey__item p {
-  font-size: .85vw;
-  line-height: 1.4;
-  color: var(--c-gray-light);
-  margin: 0;
-}
-.gsap-journey__meta {
-  display: inline-block;
-  margin-top: .6vw;
-  font-size: .76vw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--c-bg-soft);
+  border: 1px solid var(--c-border);
+  font-weight: 800;
+  font-size: .92rem;
   color: var(--c-gray);
+  transition: background .4s var(--ease-out), border-color .4s var(--ease-out), color .4s var(--ease-out), transform .4s var(--ease-out), box-shadow .4s var(--ease-out);
+  z-index: 2;
 }
-.gsap-journey__meta strong {
-  color: var(--c-yellow);
+.journey__step.is-active .journey__badge {
+  color: #0a0908;
+  background: linear-gradient(135deg, var(--c-yellow), var(--c-orange));
+  border-color: transparent;
+  box-shadow: 0 0 0 6px rgba(244,197,24,.14), 0 10px 26px rgba(244,197,24,.3);
+  transform: scale(1.08);
+}
+.journey__content .icon-tile { margin-bottom: .9rem; }
+.journey__content h3 { transition: color .4s var(--ease-out); margin-bottom: .5rem; }
+.journey__step.is-active .journey__content h3 { color: var(--c-yellow); }
+.journey__content p { max-width: 560px; }
+.journey__step-label {
+  font-size: .68rem;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--c-orange);
   font-weight: 700;
+  margin-bottom: .3rem;
+}
+
+.journey__meta {
+  display: inline-flex;
+  align-items: baseline;
+  gap: .4rem;
+  margin-top: .9rem;
+  padding-top: .9rem;
+  border-top: 1px solid var(--c-border);
+  font-size: .82rem;
+  max-width: 560px;
+}
+.journey__meta strong {
+  color: var(--c-yellow);
+  font-size: .68rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.journey__meta span { color: var(--c-gray-light); }
+
+.journey-tracker {
+  position: fixed;
+  left: 1.8rem;
+  bottom: 1.8rem;
+  z-index: 250;
+  display: flex;
+  align-items: center;
+  gap: .55rem;
+  background: rgba(19, 21, 23, .85);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--c-border);
+  border-radius: 2px;
+  padding: .55rem 1.1rem;
+  font-size: .76rem;
+  letter-spacing: .04em;
+  opacity: 0;
+  transform: translateY(8px);
+  pointer-events: none;
+  transition: opacity .35s var(--ease-out), transform .35s var(--ease-out);
+}
+.journey-tracker.is-visible { opacity: 1; transform: translateY(0); }
+.journey-tracker__num {
+  font-weight: 800;
+  color: var(--c-yellow);
+}
+.journey-tracker__label {
+  color: var(--c-gray-light);
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: .7rem;
+}
+.journey-tracker__total {
+  color: var(--c-gray);
+  font-size: .7rem;
 }
 
 /* ============================================================
@@ -2581,20 +2535,8 @@ body.id-verify-locked > *:not(#id-verify-overlay) {
   .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
   .cta-band { flex-direction: column; align-items: flex-start; }
   footer { flex-direction: column; align-items: flex-start; }
-  .gsap-journey { height: 420vh; }
-  .gsap-journey__viewport { padding-top: 5%; }
-  .gsap-journey__slider { height: 78vh; gap: 7vw; padding-inline: 7vw; }
-  .gsap-journey__image { flex-basis: 85vw; height: 62vw; border-radius: 24px; }
-  .gsap-journey__line-dot { width: 2.4vw; height: 2.4vw; }
-  .gsap-journey__title-col,
-  .gsap-journey__period-col { width: 38vw; }
-  .gsap-journey__title { font-size: 7.6vw; }
-  .gsap-journey__period { font-size: 3.8vw; }
-  .gsap-journey__items { gap: 32vw; }
-  .gsap-journey__item,
-  .gsap-journey__row--bottom .gsap-journey__item { width: 62vw; padding-inline: 5vw; }
-  .gsap-journey__item-dot { width: 2.4vw; height: 2.4vw; }
-  .gsap-journey__item h4 { font-size: 5.6vw; }
-  .gsap-journey__item p { font-size: 4.2vw; }
-  .gsap-journey__meta { font-size: 3.7vw; }
+  .journey { padding-left: 56px; }
+  .journey__badge { left: -56px; width: 46px; height: 46px; font-size: .8rem; }
+  .journey__line { left: 22px; }
+  .journey-tracker { display: none; }
 }
